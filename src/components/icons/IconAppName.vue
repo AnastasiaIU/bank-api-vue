@@ -47,7 +47,7 @@ defineProps({
         type: String,
         default: '#FFF'
     },
-    width: {
+    height: {
         type: [Number, String],
         default: 24
     }

@@ -1,19 +1,48 @@
 <script setup>
 
-import LogoIcon from './icons/IconLogo.vue'
-import AppNameIcon from './icons/IconAppName.vue'
+import Brand from './Brand.vue'
 
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+
 const email = ref('')
+const firstName = ref('')
+const lastName = ref('')
+const bsn = ref('')
+const phone = ref('')
 const password = ref('')
 const confirmPassword = ref('')
-const emailPrompt = ref('Email cannot be empty.')
-const passwordPrompt = ref('Please provide passwords.')
-const passwordType = ref('password')
+
 const regForm = ref(null)
+
+const emailPrompt = ref('Email cannot be empty.')
+const firstNamePrompt = ref('First name cannot be empty.')
+const lastNamePrompt = ref('Last name cannot be empty.')
+const bsnPrompt = ref('BSN cannot be empty.')
+const phonePrompt = ref('Phone number cannot be empty.')
+const passwordPrompt = ref('Passwords cannot be empty.')
+
+const passwordType = ref('password')
+
+let emailInput = null
+let firstNameInput = null
+let lastNameInput = null
+let bsnInput = null
+let phoneInput = null
+let passwordInput = null
+let confirmPasswordInput = null
+
+onMounted(() => {
+    emailInput = document.getElementById('emailInput')
+    firstNameInput = document.getElementById('firstNameInput')
+    lastNameInput = document.getElementById('lastNameInput')
+    bsnInput = document.getElementById('bsnInput')
+    phoneInput = document.getElementById('phoneInput')
+    passwordInput = document.getElementById('passwordInput')
+    confirmPasswordInput = document.getElementById('confirmPasswordInput')
+})
 
 function showPassword(event) {
     const type = event.target.checked ? 'text' : 'password'
@@ -21,11 +50,11 @@ function showPassword(event) {
 }
 
 function resetValidation() {
-    const emailInput = document.getElementById('inputEmail')
-    const passwordInput = document.getElementById('inputPassword')
-    const confirmPasswordInput = document.getElementById('inputConfirmPassword')
-
     emailInput.setCustomValidity('')
+    firstNameInput.setCustomValidity('')
+    lastNameInput.setCustomValidity('')
+    bsnInput.setCustomValidity('')
+    phoneInput.setCustomValidity('')
     passwordInput.setCustomValidity('')
     confirmPasswordInput.setCustomValidity('')
 
@@ -34,18 +63,9 @@ function resetValidation() {
     }
 }
 
-function setEmailValidity(message, validation) {
-    emailPrompt.value = message;
-    const emailInput = document.getElementById('inputEmail')
-    emailInput.setCustomValidity(validation)
-}
-
-function setPasswordValidity(message, validation) {
-    passwordPrompt.value = message;
-    const passwordInput = document.getElementById('inputPassword')
-    const confirmPasswordInput = document.getElementById('inputConfirmPassword')
-    passwordInput.setCustomValidity(validation)
-    confirmPasswordInput.setCustomValidity(validation)
+function setInputValidity(input, prompt, message, validation) {
+    prompt.value = message
+    input.setCustomValidity(validation)
 }
 
 function validateForm() {
@@ -57,21 +77,23 @@ async function handleSubmittion() {
         resetValidation()
 
         if (email.value === '') {
-            setEmailValidity('Email cannot be empty', 'error')
+            setInputValidity(emailInput, emailPrompt, 'Email cannot be empty.', 'error')
             validateForm()
             return
         } else {
-            setEmailValidity('Invalid email.', '')
+            setInputValidity(emailInput, emailPrompt, 'Invalid email.', '')
         }
 
         if (password.value === '') {
-            setPasswordValidity('Please provide passwords.', 'error')
+            setInputValidity(passwordInput, passwordPrompt, 'Passwords cannot be empty.', 'error')
+            setInputValidity(confirmPasswordInput, passwordPrompt, 'Passwords cannot be empty.', 'error')
             validateForm()
             return
         }
 
         if (password.value !== confirmPassword.value) {
-            setPasswordValidity('Passwords do not match', 'error')
+            setInputValidity(passwordInput, passwordPrompt, 'Passwords do not match.', 'error')
+            setInputValidity(confirmPasswordInput, passwordPrompt, 'Passwords do not match.', 'error')
             validateForm()
             return
         }
@@ -86,9 +108,10 @@ async function handleSubmittion() {
 
         router.push('/login')
     } catch (error) {
-        console.error('An error occurred during authentication:', error)
-        setEmailValidity('', 'error')
-        setPasswordValidity(error?.response?.data?.error || 'An error occurred during authentication', 'error')
+        console.error('An error occurred:', error)
+
+        const errorMessage = error?.response?.data?.error || 'An error occurred.'
+        setInputValidity(confirmPasswordInput, passwordPrompt, errorMessage, 'error')
         validateForm()
     }
 }
@@ -98,36 +121,60 @@ async function handleSubmittion() {
     <section class="card col-md-6 col-lg-5 col-xl-4 p-4 m-4">
         <form class="d-flex flex-column gap-2 needs-validation" ref="regForm" method="post"
             @submit.prevent="handleSubmittion" novalidate>
-            <div class="d-flex align-items-center justify-content-center">
-                <LogoIcon class="my-3 me-3" size="48" />
-                <AppNameIcon height="48" />
-            </div>
+            <Brand />
             <p class="h5 mb-3 medium-grey-text text-center">Create a new account</p>
             <div class="d-flex flex-column gap-3 mb-2">
                 <div class="form-group">
-                    <label for="inputEmail">Email address</label>
-                    <input v-model="email" type="email" name="email" class="form-control" id="inputEmail"
-                        aria-describedby="emailHelp" placeholder="Enter email" @keyup="resetValidation" required>
-                    <div class="invalid-feedback" id="inputEmailPrompt">{{ emailPrompt }}</div>
+                    <label for="emailInput">Email address</label>
+                    <input id="emailInput" v-model="email" type="email" name="email" class="form-control"
+                        aria-describedby="emailHelp" placeholder="Enter email" @keyup="resetValidation"
+                        @blur="email = email.trim()" autocomplete="off" required>
+                    <div class="invalid-feedback">{{ emailPrompt }}</div>
                 </div>
                 <div class="form-group">
-                    <label for="inputPassword">Password</label>
-                    <input v-model="password" :type="passwordType" name="password" class="form-control"
-                        id="inputPassword" placeholder="Password" @keyup="resetValidation" required>
+                    <label for="firstNameInput">First name</label>
+                    <input id="firstNameInput" v-model="firstName" type="text" name="firstName" class="form-control"
+                        placeholder="Enter first name" @blur="firstName = firstName.trim()" @keyup="resetValidation"
+                        required>
+                    <div class="invalid-feedback">{{ firstNamePrompt }}</div>
                 </div>
                 <div class="form-group">
-                    <label for="inputConfirmPassword">Confirm password</label>
-                    <input v-model="confirmPassword" :type="passwordType" name="confirmPassword" class="form-control"
-                        id="inputConfirmPassword" placeholder="Confirm password" @keyup="resetValidation" required>
-                    <div class="invalid-feedback" id="confirmPasswordPrompt">{{ passwordPrompt }}</div>
+                    <label for="lastNameInput">Last name</label>
+                    <input id="lastNameInput" v-model="lastName" type="text" name="lastName" class="form-control"
+                        placeholder="Enter last name" @keyup="resetValidation" required>
+                    <div class="invalid-feedback">{{ lastNamePrompt }}</div>
+                </div>
+                <div class="form-group">
+                    <label for="bsnInput">BSN</label>
+                    <input id="bsnInput" v-model="bsn" type="number" name="bsn" class="form-control"
+                        placeholder="Enter BSN" @keyup="resetValidation" required>
+                    <div class="invalid-feedback">{{ bsnPrompt }}</div>
+                </div>
+                <div class="form-group">
+                    <label for="phoneInput">Phone</label>
+                    <input id="phoneInput" v-model="phone" type="tel" name="phone" class="form-control"
+                        placeholder="Enter phone number" @keyup="resetValidation" required>
+                    <div class="invalid-feedback">{{ phonePrompt }}</div>
+                </div>
+                <div class="form-group">
+                    <label for="passwordInput">Password</label>
+                    <input id="passwordInput" v-model="password" :type="passwordType" name="password"
+                        class="form-control" placeholder="Enter password" @keyup="resetValidation" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPasswordInput">Confirm password</label>
+                    <input id="confirmPasswordInput" v-model="confirmPassword" :type="passwordType"
+                        name="confirmPassword" class="form-control" placeholder="Confirm password"
+                        @keyup="resetValidation" required>
+                    <div class="invalid-feedback">{{ passwordPrompt }}</div>
                 </div>
             </div>
             <div class="d-flex align-items-center mb-4">
-                <input class="checkbox me-2" type="checkbox" value="" id="showPasswordCheck"
+                <input id="showPasswordCheck" class="checkbox me-2" type="checkbox" value=""
                     @change="showPassword($event)">
-                <label class="" for="showPasswordCheck">Show passwords</label>
+                <label for="showPasswordCheck">Show passwords</label>
             </div>
-            <button type="submit" class="btn btn-primary mb-3" id="registerBtn">Register</button>
+            <button id="registerBtn" type="submit" class="btn btn-primary mb-3">Register</button>
         </form>
     </section>
 </template>
