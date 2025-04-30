@@ -5,13 +5,41 @@ import Brand from './Brand.vue'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
+import { useAuthStore } from '@/stores/auth'
 import { useAuthFeedbackStore } from '@/stores/authFeedback'
 
 const router = useRouter()
 
+const authStore = useAuthStore()
 const authFeedbackStore = useAuthFeedbackStore()
 
+// Input values
+const email = ref('')
+const password = ref('')
+
+// Input prompts
+const loginEmailPrompt = ref('')
+const loginPasswordPrompt = ref('')
+
+// Input references
+const loginEmailInput = ref(null)
+const loginPasswordInput = ref(null)
+
+const regForm = ref(null)
+
+const passwordType = ref('password')
+
 const showToast = ref(false)
+
+const errorMap = {
+    email: { input: loginEmailInput , prompt: loginEmailPrompt },
+    password: { input: loginPasswordInput, prompt: loginPasswordPrompt }
+}
+
+function showPassword(event) {
+    const type = event.target.checked ? 'text' : 'password'
+    passwordType.value = type
+}
 
 onMounted(() => {
     if (authFeedbackStore.wasRegistered) {
@@ -27,42 +55,137 @@ function displayToast() {
         showToast.value = false
     }, 3000)
 }
+
+function resetValidation() {
+    Object.values(errorMap).forEach(({ input, prompt }) => {
+        input.value.setCustomValidity('')
+        prompt.value = 'Invalid input'
+    })
+
+    if (regForm.value.classList.contains('was-validated')) {
+        regForm.value.classList.remove('was-validated')
+    }
+}
+
+function setInputValidity(errorMapElement, message, validation) {
+    errorMapElement.prompt.value = message
+    errorMapElement.input.value.setCustomValidity(validation)
+}
+
+function validateForm() {
+    regForm.value.classList.add('was-validated')
+}
+
+async function handleSubmit() {
+    try {
+        resetValidation()
+        validateForm()
+
+        if (!regForm.value.checkValidity()) {
+            return
+        }
+
+        const userData = {
+            email: email.value,
+            password: password.value
+        }
+
+        await authStore.login(userData)
+        router.push('/welcome')
+
+    } catch (error) {
+        console.error('Login error:', error)
+
+        const rawMessage = error?.response?.data || 'An error occurred'
+        const messages = Array.isArray(rawMessage) ? rawMessage : [rawMessage]
+
+        let matched = false
+
+        for (const key in errorMap) {
+            const matchingMessage = messages.find(msg => msg.startsWith(`${key}: `))
+            if (matchingMessage) {
+                const cleanedMessage = matchingMessage.replace(`${key}: `, '')
+                setInputValidity(errorMap[key], cleanedMessage, 'error')
+                matched = true
+            }
+        }
+
+        if (!matched) {
+            setInputValidity(errorMap.password, messages[0], 'error')
+        }
+
+        validateForm()
+    }
+}
 </script>
 
 <template>
     <section class="card col-md-6 col-lg-5 col-xl-4 p-4 m-4">
-        <form class="d-flex flex-column gap-2 needs-validation" ref="regForm" id="loginForm" method="post"
-            @submit.prevent="handleSubmittion" novalidate>
-            <Brand />
-            <p class="h5 mb-3 medium-grey-text text-center">Log in to your account</p>
-            <div class="form-group">
-                <label for="loginEmail">Email address</label>
-                <input type="email" name="email" class="form-control" aria-describedby="emailHelp"
-                    placeholder="Enter email" required>
-                <div class="invalid-feedback" id="loginEmailPrompt"></div>
-            </div>
-            <div class="form-group mb-2">
-                <label for="loginPassword">Password</label>
-                <input name="password" class="form-control" placeholder="Password" required>
-                <div class="invalid-feedback" id="loginPasswordPrompt"></div>
-            </div>
-            <div class="d-flex align-items-center mb-4">
-                <input class="checkbox me-2" type="checkbox" value="">
-                <label class="" for="showPasswordCheck">Show password</label>
-            </div>
-            <button type="submit" class="btn btn-primary mb-3">Log in</button>
-            <p>Don't have an account?
-                <a class="link-opacity-75-hover">
-                    <router-link to="/register" @click.prevent="router.push(`/register`)">
-                        Sign up
-                    </router-link>
-                </a>.
-            </p>
-        </form>
-        <div v-if="showToast" class="toast-message">Registration successful! You can now log in.</div>
+      <form
+        class="d-flex flex-column gap-2 needs-validation"
+        ref="regForm"
+        method="post"
+        @submit.prevent="handleSubmit"
+        novalidate
+      >
+        <Brand />
+        <p class="h5 mb-3 medium-grey-text text-center">Log in to your account</p>
+  
+        <div class="form-group">
+          <label for="loginEmailInput">Email address</label>
+          <input
+            id="loginEmailInput"
+            type="email"
+            name="email"
+            class="form-control"
+            aria-describedby="emailHelp"
+            placeholder="Enter email"
+            required
+            ref="loginEmailInput"
+            v-model="email"
+          />
+          <div class="invalid-feedback">{{ loginEmailPrompt }}</div>
+        </div>
+  
+        <div class="form-group mb-2">
+          <label for="loginPasswordInput">Password</label>
+          <input
+            id="loginPasswordInput"
+            :type="passwordType"
+            name="password"
+            class="form-control"
+            placeholder="Enter password"
+            required
+            ref="loginPasswordInput"
+            v-model="password"
+          />
+          <div class="invalid-feedback">{{ loginPasswordPrompt }}</div>
+        </div>
+  
+        <div class="form-check mb-2">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="showPasswordCheckbox"
+            @change="showPassword"
+          />
+          <label class="form-check-label" for="showPasswordCheckbox">Show password</label>
+        </div>
+  
+        <button type="submit" class="btn btn-primary mb-3">Log in</button>
+  
+        <p>
+          Don't have an account?
+          <router-link to="/register" class="link-opacity-75-hover">Sign up</router-link>.
+        </p>
+      </form>
+  
+      <div v-if="showToast" class="toast-message">
+        Registration successful! You can now log in.
+      </div>
     </section>
-</template>
-
+  </template>
+  
 <style scoped>
 .toast-message {
     position: fixed;
