@@ -1,12 +1,12 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
 import axios from "axios";
 
 import { API_ENDPOINTS } from "@/utils/config";
 
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 
-export const useAuthStore = defineStore('auth', () => {
+export const useAuthStore = defineStore("auth", () => {
   const user = ref(null);
   const token = ref(null);
 
@@ -14,15 +14,15 @@ export const useAuthStore = defineStore('auth', () => {
   const isEmployee = computed(() => user.value?.role === "EMPLOYEE");
 
   async function login(credentials) {
-      const response = await axios.post(API_ENDPOINTS.login, credentials);
+    const response = await axios.post(API_ENDPOINTS.login, credentials);
 
-      if (response.data.token) {
-        token.value = response.data.token;
-        user.value = response.data.user;
-        localStorage.setItem("authToken", token.value);
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token.value}`;
-        return response;
-      }
+    if (response.data.token) {
+      token.value = response.data.token;
+      user.value = response.data.user;
+      localStorage.setItem("authToken", token.value);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token.value}`;
+      return response;
+    }
   }
 
   function logout() {
@@ -62,18 +62,19 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-    async function register(credentials) {
-        await axios.post(API_ENDPOINTS.register, credentials)
-    }
+  async function register(credentials) {
+    await axios.post(API_ENDPOINTS.register, credentials);
+  }
 
-    return { register, 
-        user,
-        token,
-        isAuthenticated,
-        isEmployee,
-        login,  
-        logout,
-        initializeAuth,
-        fetchUser,
-    };
-})
+  return {
+    register,
+    user,
+    token,
+    isAuthenticated,
+    isEmployee,
+    login,
+    logout,
+    initializeAuth,
+    fetchUser,
+  };
+});

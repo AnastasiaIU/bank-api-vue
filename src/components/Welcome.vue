@@ -1,39 +1,33 @@
-
 <template>
-    <section v-if="authStore.isAuthenticated" class="text-center mt-5">
-      <h1 class="display-4">Welcome, {{ user?.firstName }}!</h1>
-      <p class="lead">Your role: <strong>{{ user?.role }}</strong></p>
-
-      <button class="btn btn-danger mt-4" @click="handleLogout">Log out</button>
-    </section>
-
-    <section v-else class="text-center mt-5">
-    <h2>You are not logged in.</h2>
-    <router-link to="/login" class="btn btn-primary mt-3">Go to Login</router-link>
+  <section v-if="authStore.isAuthenticated" class="text-center mt-5">
+    <h1 class="display-4">Welcome, {{ user?.firstName }}!</h1>
+    <p class="lead">
+      Your role is <strong>{{ user?.role }}</strong>
+    </p>
   </section>
+</template>
 
+<script setup>
+import { useAuthStore } from "@/stores/auth";
+import { useRouter } from "vue-router";
 
-  </template>
-  
-  <script setup>
-  import { useAuthStore } from '@/stores/auth'
-  import { useRouter } from 'vue-router'
+const router = useRouter();
 
-const router = useRouter()
-  
-  const authStore = useAuthStore()
-  const user = authStore.user
+const authStore = useAuthStore();
+const user = authStore.user;
+</script>
 
-  function handleLogout() {
-  authStore.logout()
-  router.push('/login')
+<style scoped>
+section {
+  max-width: 600px;
+  margin: auto;
+  background: var(--color-background); /* Light background */
+  color: var(--color-text);
+  padding: 20px;
+  border-radius: 10px;
 }
-  </script>
-  
-  <style scoped>
-  section {
-    max-width: 600px;
-    margin: auto;
-  }
-  </style>
-  
+
+h1, h2, p {
+  color: var(--color-text);
+}
+</style>
