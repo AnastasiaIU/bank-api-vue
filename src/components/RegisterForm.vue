@@ -1,19 +1,57 @@
 <script setup>
 
-import LogoIcon from './icons/IconLogo.vue'
-import AppNameIcon from './icons/IconAppName.vue'
+import Brand from './Brand.vue'
 
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+import { useAuthStore } from '@/stores/auth'
+import { useAuthFeedbackStore } from '@/stores/authFeedback'
+
 const router = useRouter()
+
+const authStore = useAuthStore()
+const authFeedbackStore = useAuthFeedbackStore()
+
+// Input values
 const email = ref('')
+const firstName = ref('')
+const lastName = ref('')
+const bsn = ref('')
+const phone = ref('')
 const password = ref('')
 const confirmPassword = ref('')
-const emailPrompt = ref('Email cannot be empty.')
-const passwordPrompt = ref('Please provide passwords.')
-const passwordType = ref('password')
+
+// Input prompts
+const emailPrompt = ref('')
+const firstNamePrompt = ref('')
+const lastNamePrompt = ref('')
+const bsnPrompt = ref('')
+const phonePrompt = ref('')
+const passwordPrompt = ref('')
+
+// Input references
+const emailInput = ref(null)
+const firstNameInput = ref(null)
+const lastNameInput = ref(null)
+const bsnInput = ref(null)
+const phoneInput = ref(null)
+const passwordInput = ref(null)
+const confirmPasswordInput = ref(null)
+
 const regForm = ref(null)
+
+const passwordType = ref('password')
+
+const errorMap = {
+    email: { input: emailInput, prompt: emailPrompt },
+    bsn: { input: bsnInput, prompt: bsnPrompt },
+    firstName: { input: firstNameInput, prompt: firstNamePrompt },
+    lastName: { input: lastNameInput, prompt: lastNamePrompt },
+    phoneNumber: { input: phoneInput, prompt: phonePrompt },
+    password: { input: passwordInput, prompt: passwordPrompt },
+    confirmPassword: { input: confirmPasswordInput, prompt: passwordPrompt }
+}
 
 function showPassword(event) {
     const type = event.target.checked ? 'text' : 'password'
@@ -21,59 +59,32 @@ function showPassword(event) {
 }
 
 function resetValidation() {
-    const emailInput = document.getElementById('inputEmail')
-    const passwordInput = document.getElementById('inputPassword')
-    const confirmPasswordInput = document.getElementById('inputConfirmPassword')
-
-    emailInput.setCustomValidity('')
-    passwordInput.setCustomValidity('')
-    confirmPasswordInput.setCustomValidity('')
+    Object.values(errorMap).forEach(({ input, prompt }) => {
+        input.value.setCustomValidity('')
+        prompt.value = 'Invalid input'
+    })
 
     if (regForm.value.classList.contains('was-validated')) {
         regForm.value.classList.remove('was-validated')
     }
 }
 
-function setEmailValidity(message, validation) {
-    emailPrompt.value = message;
-    const emailInput = document.getElementById('inputEmail')
-    emailInput.setCustomValidity(validation)
-}
-
-function setPasswordValidity(message, validation) {
-    passwordPrompt.value = message;
-    const passwordInput = document.getElementById('inputPassword')
-    const confirmPasswordInput = document.getElementById('inputConfirmPassword')
-    passwordInput.setCustomValidity(validation)
-    confirmPasswordInput.setCustomValidity(validation)
+function setInputValidity(errorMapElement, message, validation) {
+    errorMapElement.prompt.value = message
+    errorMapElement.input.value.setCustomValidity(validation)
 }
 
 function validateForm() {
     regForm.value.classList.add('was-validated')
 }
 
-async function handleSubmittion() {
+async function handleSubmit() {
     try {
         resetValidation()
 
-        if (email.value === '') {
-            setEmailValidity('Email cannot be empty', 'error')
-            validateForm()
-            return
-        } else {
-            setEmailValidity('Invalid email.', '')
-        }
-
-        if (password.value === '') {
-            setPasswordValidity('Please provide passwords.', 'error')
-            validateForm()
-            return
-        }
-
         if (password.value !== confirmPassword.value) {
-            setPasswordValidity('Passwords do not match', 'error')
-            validateForm()
-            return
+            setInputValidity(errorMap.password, 'Passwords do not match', 'error')
+            setInputValidity(errorMap.confirmPassword, 'Passwords do not match', 'error')
         }
 
         validateForm()
@@ -82,13 +93,42 @@ async function handleSubmittion() {
             return
         }
 
-        //await authStore.register({ email: email.value, password: password.value })
+        const userData = {
+            email: email.value,
+            firstName: firstName.value,
+            lastName: lastName.value,
+            bsn: bsn.value,
+            phoneNumber: phone.value,
+            password: password.value
+        }
+
+        await authStore.register(userData)
+
+        authFeedbackStore.setWasRegistered(true)
 
         router.push('/login')
+
     } catch (error) {
-        console.error('An error occurred during authentication:', error)
-        setEmailValidity('', 'error')
-        setPasswordValidity(error?.response?.data?.error || 'An error occurred during authentication', 'error')
+        console.error('An error occurred:', error)
+
+        const rawMessage = error?.response?.data?.message || 'An error occurred'
+        const messages = Array.isArray(rawMessage) ? rawMessage : [rawMessage]
+
+        let matched = false
+
+        for (const key in errorMap) {
+            const matchingMessage = messages.find(msg => msg.startsWith(`${key}: `))
+            if (matchingMessage) {
+                const cleanedMessage = matchingMessage.replace(`${key}: `, '')
+                setInputValidity(errorMap[key], cleanedMessage, 'error')
+                matched = true
+            }
+        }
+
+        if (!matched) {
+            setInputValidity(errorMap.password, messages[0], 'error')
+        }
+
         validateForm()
     }
 }
@@ -97,37 +137,61 @@ async function handleSubmittion() {
 <template>
     <section class="card col-md-6 col-lg-5 col-xl-4 p-4 m-4">
         <form class="d-flex flex-column gap-2 needs-validation" ref="regForm" method="post"
-            @submit.prevent="handleSubmittion" novalidate>
-            <div class="d-flex align-items-center justify-content-center">
-                <LogoIcon class="my-3 me-3" size="48" />
-                <AppNameIcon height="48" />
-            </div>
+            @submit.prevent="handleSubmit" novalidate>
+            <Brand />
             <p class="h5 mb-3 medium-grey-text text-center">Create a new account</p>
             <div class="d-flex flex-column gap-3 mb-2">
                 <div class="form-group">
-                    <label for="inputEmail">Email address</label>
-                    <input v-model="email" type="email" name="email" class="form-control" id="inputEmail"
-                        aria-describedby="emailHelp" placeholder="Enter email" @keyup="resetValidation" required>
-                    <div class="invalid-feedback" id="inputEmailPrompt">{{ emailPrompt }}</div>
+                    <label for="emailInput">Email address</label>
+                    <input id="emailInput" ref="emailInput" v-model="email" type="email" name="email"
+                        class="form-control" aria-describedby="emailHelp" placeholder="Enter email"
+                        @keyup="resetValidation" autocomplete="off" required>
+                    <div class="invalid-feedback">{{ emailPrompt }}</div>
                 </div>
                 <div class="form-group">
-                    <label for="inputPassword">Password</label>
-                    <input v-model="password" :type="passwordType" name="password" class="form-control"
-                        id="inputPassword" placeholder="Password" @keyup="resetValidation" required>
+                    <label for="firstNameInput">First name</label>
+                    <input id="firstNameInput" ref="firstNameInput" v-model="firstName" type="text" name="firstName"
+                        class="form-control" placeholder="Enter first name" @keyup="resetValidation" required>
+                    <div class="invalid-feedback">{{ firstNamePrompt }}</div>
                 </div>
                 <div class="form-group">
-                    <label for="inputConfirmPassword">Confirm password</label>
-                    <input v-model="confirmPassword" :type="passwordType" name="confirmPassword" class="form-control"
-                        id="inputConfirmPassword" placeholder="Confirm password" @keyup="resetValidation" required>
-                    <div class="invalid-feedback" id="confirmPasswordPrompt">{{ passwordPrompt }}</div>
+                    <label for="lastNameInput">Last name</label>
+                    <input id="lastNameInput" ref="lastNameInput" v-model="lastName" type="text" name="lastName"
+                        class="form-control" placeholder="Enter last name" @keyup="resetValidation" required>
+                    <div class="invalid-feedback">{{ lastNamePrompt }}</div>
+                </div>
+                <div class="form-group">
+                    <label for="bsnInput">BSN</label>
+                    <input id="bsnInput" ref="bsnInput" v-model="bsn" type="number" name="bsn" class="form-control"
+                        placeholder="Enter BSN" @keyup="resetValidation" required>
+                    <div class="invalid-feedback">{{ bsnPrompt }}</div>
+                </div>
+                <div class="form-group">
+                    <label for="phoneInput">Phone</label>
+                    <input id="phoneInput" ref="phoneInput" v-model="phone" type="tel" name="phone" class="form-control"
+                        placeholder="Enter phone number" @keyup="resetValidation" required>
+                    <div class="invalid-feedback">{{ phonePrompt }}</div>
+                </div>
+                <div class="form-group">
+                    <label for="passwordInput">Password</label>
+                    <input id="passwordInput" ref="passwordInput" v-model="password" :type="passwordType"
+                        name="password" class="form-control" placeholder="Enter password" @keyup="resetValidation"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPasswordInput">Confirm password</label>
+                    <input id="confirmPasswordInput" ref="confirmPasswordInput" v-model="confirmPassword"
+                        :type="passwordType" name="confirmPassword" class="form-control" placeholder="Confirm password"
+                        @keyup="resetValidation" required>
+                    <div class="invalid-feedback">{{ passwordPrompt }}</div>
                 </div>
             </div>
             <div class="d-flex align-items-center mb-4">
-                <input class="checkbox me-2" type="checkbox" value="" id="showPasswordCheck"
+                <input id="showPasswordCheck" class="checkbox me-2" type="checkbox" value=""
                     @change="showPassword($event)">
-                <label class="" for="showPasswordCheck">Show passwords</label>
+                <label for="showPasswordCheck">Show passwords</label>
             </div>
-            <button type="submit" class="btn btn-primary mb-3" id="registerBtn">Register</button>
+            <button id="registerBtn" type="submit" class="btn btn-primary mb-3">Register</button>
         </form>
     </section>
 </template>
