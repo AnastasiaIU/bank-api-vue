@@ -6,7 +6,6 @@ import Navbar from '../components/Navbar.vue';
 <template>
   <div class="layout-container">
     <Navbar />
-    <!-- Main content -->
     <main class="main-content">
       <WelcomePage />
     </main>
@@ -18,8 +17,8 @@ import Navbar from '../components/Navbar.vue';
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: var(--color-background); /* Light background */
-  color: var(--color-text); /* Text color */
+  background: var(--color-background);
+  color: var(--color-text);
 }
 
 .main-content {
@@ -28,7 +27,7 @@ import Navbar from '../components/Navbar.vue';
   flex-direction: column;
   align-items: center;
   padding: 0;
-  background: var(--color-background); /* Light background */
-  color: var(--color-text); /* Text color */
+  background: var(--color-background);
+  color: var(--color-text);
 }
 </style>

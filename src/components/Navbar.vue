@@ -5,8 +5,6 @@ import { useAuthStore } from "@/stores/auth";
 const authStore = useAuthStore();
 const user = authStore.user;
 
-console.log("User data:", user);
-
 function handleLogout() {
   authStore.logout();
 }
@@ -16,17 +14,16 @@ function handleLogout() {
   <!-- Top Navbar -->
   <nav class="navbar navbar-light bg-light px-3 shadow-sm">
     <div class="container-fluid justify-content-between">
-      <!-- Brand -->
+      
       <a class="navbar-brand m-0 p-0" href="#">
         <Brand />
       </a>
 
-      <!-- User Info (Visible only if authenticated on large screens) -->
+      <!-- User Info (Visible only if logged in) -->
       <div
         v-if="authStore.isAuthenticated"
         class="d-flex align-items-center gap-3 d-none d-lg-flex"
       >
-        <!-- Grouped User Icon and Name with gap -->
         <div class="user-info">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -47,7 +44,6 @@ function handleLogout() {
           >
         </div>
 
-        <!-- Logout Button (Visible only on large screens) -->
         <button
           class="btn btn-sm btn-danger d-none d-lg-block ms-3"
           @click="handleLogout"
@@ -56,11 +52,14 @@ function handleLogout() {
         </button>
       </div>
 
-      <router-link v-else to="/login" class="btn btn-md btn-outline-primary d-none d-lg-block"
+      <router-link
+        v-else
+        to="/login"
+        class="btn btn-md btn-outline-primary d-none d-lg-block"
         >Log in</router-link
       >
 
-      <!-- Hamburger Menu Toggle Button (Visible on small screens) -->
+      <!-- Hamburger Menu Toggle -->
       <button
         class="navbar-toggler d-lg-none"
         type="button"
@@ -89,7 +88,6 @@ function handleLogout() {
       ></button>
     </div>
     <div class="offcanvas-body">
-      <!-- User Info or Log in in Offcanvas for Small Screens -->
       <div
         v-if="authStore.isAuthenticated"
         class="d-flex align-items-center gap-3 mb-3"
@@ -113,7 +111,6 @@ function handleLogout() {
         >
       </div>
 
-      <!-- Logout or Log in Button in Offcanvas for Small Screens -->
       <button
         v-if="authStore.isAuthenticated"
         class="btn btn-sm btn-danger w-100 mt-3"
@@ -127,7 +124,6 @@ function handleLogout() {
         v-else
         to="/login"
         class="btn btn-sm btn-outline-primary w-100 mt-3"
-        data-bs-dismiss="offcanvas"
       >
         Log in
       </router-link>
@@ -151,7 +147,6 @@ function handleLogout() {
 }
 
 nav.navbar {
-  border-bottom: 2px solid var(--color-primary);; /* Light gray similar to Bootstrap's borders */
+  border-bottom: 2px solid var(--color-primary);
 }
-
 </style>

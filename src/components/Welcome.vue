@@ -21,7 +21,7 @@ const user = authStore.user;
 section {
   max-width: 600px;
   margin: auto;
-  background: var(--color-background); /* Light background */
+  background: var(--color-background);
   color: var(--color-text);
   padding: 20px;
   border-radius: 10px;
