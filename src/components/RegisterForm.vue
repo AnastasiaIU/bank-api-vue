@@ -192,6 +192,10 @@ async function handleSubmit() {
                 <label for="showPasswordCheck">Show passwords</label>
             </div>
             <button id="registerBtn" type="submit" class="btn btn-primary mb-3">Register</button>
+            <p>
+          Already have an account?
+          <router-link to="/login" class="link-opacity-75-hover">Login</router-link>.
+        </p>
         </form>
     </section>
 </template>

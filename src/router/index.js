@@ -28,6 +28,11 @@ const router = createRouter({
       path: '/transfer',
       name: 'transfer',
       component: () => import('../views/TransferFundsView.vue')
+    },
+    {
+      path: '/welcome',
+      name: 'welcome',
+      component: () => import('../views/WelcomeView.vue')
     }
   ],
 })
