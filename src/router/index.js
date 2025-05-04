@@ -33,6 +33,11 @@ const router = createRouter({
       path: '/welcome',
       name: 'welcome',
       component: () => import('../views/WelcomeView.vue')
+    },
+    {
+      path: '/accounts/:accountId/transactions',
+      name: 'account-transactions',
+      component: () => import('../views/AccountTransactionsViews.vue')
     }
   ],
 })
