@@ -1,53 +1,43 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-
+import { useAuthStore } from '@/stores/auth'
+import axios from 'axios'
 import Brand from '@/components/Brand.vue'
 
-// Simulated store or API call (replace with actual store or API call)
-const route = useRoute()
-const accountId = ref(route.params.id)
-
-const customer = ref({
+// Access the auth store
+const authStore = useAuthStore()
+const token = authStore.token
+const customer = ref(authStore.user || {
   firstName: '',
   lastName: '',
   email: '',
-  phone: '',
+  phone: ''
 })
 
-const accounts = ref([
-  // Example structure; in real usage, fetch this from the backend
-  { type: 'Checking', iban: '', balance: 0 },
-  { type: 'Savings', iban: '', balance: 0 }
-])
-
+const userId = ref(authStore.user?.id || null)
+const accounts = ref([])
 const combinedTotal = ref(0)
 
 async function fetchAccountDetails(id) {
-  // Simulated fetch; replace with your actual API call
-  // Example:
-  // const data = await api.getAccountDetails(id)
-  // customer.value = data.customer
-  // accounts.value = data.accounts
-  // combinedTotal.value = data.combinedTotal
-
-  customer.value = {
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
-    phone: '+1234567890'
+  try {
+    const response = await axios.get(`http://localhost:8080/users/${id}/accounts`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    accounts.value = response.data
+    combinedTotal.value = accounts.value.reduce((sum, acc) => sum + acc.balance, 0)
+  } catch (error) {
+    console.error('Failed to fetch account details:', error)
   }
-
-  accounts.value = [
-    { type: 'Checking', iban: 'NL91ABNA0417164300', balance: 1250.50 },
-    { type: 'Savings', iban: 'NL91ABNA0417164301', balance: 2750.25 }
-  ]
-
-  combinedTotal.value = accounts.value.reduce((sum, acc) => sum + acc.balance, 0)
 }
 
 onMounted(() => {
-  fetchAccountDetails(accountId.value)
+  if (token && userId.value) {
+    fetchAccountDetails(userId.value)
+  } else {
+    console.error('Token or user info missing, please log in')
+  }
 })
 </script>
 
