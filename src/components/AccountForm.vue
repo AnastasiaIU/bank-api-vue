@@ -11,7 +11,7 @@ const customer = ref(authStore.user || {
   firstName: '',
   lastName: '',
   email: '',
-  phone: ''
+  phoneNumber: ''
 })
 
 const userId = ref(authStore.user?.id || null)
@@ -49,7 +49,7 @@ onMounted(() => {
     <div class="mb-4">
       <p><strong>Name:</strong> {{ customer.firstName }} {{ customer.lastName }}</p>
       <p><strong>Email:</strong> {{ customer.email }}</p>
-      <p><strong>Phone:</strong> {{ customer.phone }}</p>
+      <p><strong>Phone:</strong> {{ customer.phoneNumber }}</p>
     </div>
 
     <div class="mb-3">
