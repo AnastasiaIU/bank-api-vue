@@ -2,7 +2,7 @@
 
 import Brand from './Brand.vue'
 
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useAuthStore } from '@/stores/auth'
@@ -43,6 +43,9 @@ const regForm = ref(null)
 
 const passwordType = ref('password')
 
+const showError = ref(false)
+const errorMessage = ref('')
+
 const errorMap = {
     email: { input: emailInput, prompt: emailPrompt },
     bsn: { input: bsnInput, prompt: bsnPrompt },
@@ -52,6 +55,12 @@ const errorMap = {
     password: { input: passwordInput, prompt: passwordPrompt },
     confirmPassword: { input: confirmPasswordInput, prompt: passwordPrompt }
 }
+
+onMounted(() => {
+  if (authStore.isAuthenticated) {
+    router.push('/welcome')
+  }
+})
 
 function showPassword(event) {
     const type = event.target.checked ? 'text' : 'password'
@@ -111,7 +120,7 @@ async function handleSubmit() {
     } catch (error) {
         console.error('An error occurred:', error)
 
-        const rawMessage = error?.response?.data?.message || 'An error occurred'
+        const rawMessage = error?.response?.data?.message || 'An error occurred. Please try again.'
         const messages = Array.isArray(rawMessage) ? rawMessage : [rawMessage]
 
         let matched = false
@@ -126,7 +135,8 @@ async function handleSubmit() {
         }
 
         if (!matched) {
-            setInputValidity(errorMap.password, messages[0], 'error')
+            showError.value = true
+            errorMessage.value = messages[0]
         }
 
         validateForm()
@@ -140,6 +150,7 @@ async function handleSubmit() {
             @submit.prevent="handleSubmit" novalidate>
             <Brand />
             <p class="h5 mb-3 medium-grey-text text-center">Create a new account</p>
+            <div v-if="showError" class="alert alert-danger" role="alert">{{ errorMessage }}</div>
             <div class="d-flex flex-column gap-3 mb-2">
                 <div class="form-group">
                     <label for="emailInput">Email address</label>
@@ -193,9 +204,9 @@ async function handleSubmit() {
             </div>
             <button id="registerBtn" type="submit" class="btn btn-primary mb-3">Register</button>
             <p>
-          Already have an account?
-          <router-link to="/login" class="link-opacity-75-hover">Login</router-link>.
-        </p>
+                Already have an account? 
+                <router-link to="/login" class="link-opacity-75-hover">Log in</router-link>.
+            </p>
         </form>
     </section>
 </template>
