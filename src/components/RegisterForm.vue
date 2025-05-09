@@ -1,8 +1,8 @@
 <script setup>
 
-import Brand from './Brand.vue'
+import Brand from './shared/Brand.vue'
 
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useAuthStore } from '@/stores/auth'
@@ -56,12 +56,6 @@ const errorMap = {
     confirmPassword: { input: confirmPasswordInput, prompt: passwordPrompt }
 }
 
-onMounted(() => {
-  if (authStore.isAuthenticated) {
-    router.push('/welcome')
-  }
-})
-
 function showPassword(event) {
     const type = event.target.checked ? 'text' : 'password'
     passwordType.value = type
@@ -76,6 +70,8 @@ function resetValidation() {
     if (regForm.value.classList.contains('was-validated')) {
         regForm.value.classList.remove('was-validated')
     }
+
+    errorMessage.value = ""
 }
 
 function setInputValidity(errorMapElement, message, validation) {

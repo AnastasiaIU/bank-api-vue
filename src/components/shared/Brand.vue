@@ -1,6 +1,6 @@
 <script setup>
-import LogoIcon from './icons/IconLogo.vue'
-import AppNameIcon from './icons/IconAppName.vue'
+import LogoIcon from '../icons/IconLogo.vue'
+import AppNameIcon from '../icons/IconAppName.vue'
 </script>
 
 <template>

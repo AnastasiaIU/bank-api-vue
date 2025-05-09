@@ -1,11 +1,9 @@
 <script setup>
 import WelcomePage from '../components/Welcome.vue';
-import Navbar from '../components/Navbar.vue';
 </script>
 
 <template>
   <div class="layout-container">
-    <Navbar />
     <main class="main-content">
       <WelcomePage />
     </main>
@@ -16,7 +14,6 @@ import Navbar from '../components/Navbar.vue';
 .layout-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   background: var(--color-background);
   color: var(--color-text);
 }
