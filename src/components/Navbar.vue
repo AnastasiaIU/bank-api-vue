@@ -1,5 +1,6 @@
 <script setup>
 import Brand from "./Brand.vue";
+import Spinner from "./shared/Spinner.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
@@ -19,12 +20,9 @@ function handleLogout() {
 </script>
 
 <template>
-  <div v-if="isLoggingOut" class="logout-overlay">
-  <div class="spinner-border text-primary" role="status">
-    <span class="visually-hidden">Logging out...</span>
+  <div v-if="isLoggingOut">
+    <Spinner message="Logging out..." size="md" />
   </div>
-  <p class="mt-2 text-primary">Logging out...</p>
-</div>
 
   <!-- Top Navbar -->
   <nav class="navbar navbar-light bg-light px-3 shadow-sm">
@@ -163,17 +161,6 @@ function handleLogout() {
 
 nav.navbar {
   border-bottom: 2px solid var(--color-primary);
-}
-
-.logout-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(255, 255, 255, 0.765);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
 }
 
 </style>
