@@ -109,14 +109,14 @@ async function handleSubmit() {
         await authStore.fetchUser();
         router.push("/welcome");
       } catch (error) {
-        generalError.value = error?.response?.data || "An error occurred, please try again.";
+        generalError.value = error?.response?.data.message[0] || "An error occurred, please try again.";
       } finally {
         isLoading.value = false;
         validateForm();
       }
     }, 3000)
   } catch (error) {
-    generalError.value = error?.response?.data || "An error occurred, please try again.";
+    generalError.value = error?.response?.data.message[0] || "An error occurred, please try again.";
   }
 }
 </script>
