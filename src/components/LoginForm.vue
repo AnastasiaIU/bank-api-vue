@@ -1,5 +1,7 @@
 <script setup>
 import Brand from "./Brand.vue";
+import ToastMessage from "./shared/ToastMessage.vue";
+import Spinner from "./shared/Spinner.vue";
 
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -11,6 +13,8 @@ const router = useRouter();
 
 const authStore = useAuthStore();
 const authFeedbackStore = useAuthFeedbackStore();
+
+const isLoading = ref(false);
 
 // Input values
 const email = ref("");
@@ -44,18 +48,10 @@ function showPassword(event) {
 
 onMounted(() => {
   if (authFeedbackStore.wasRegistered) {
-    displayToast();
+    showToast.value = true;
     authFeedbackStore.setWasRegistered(false);
   }
 });
-
-function displayToast() {
-  showToast.value = true;
-
-  setTimeout(() => {
-    showToast.value = false;
-  }, 3000);
-}
 
 function resetValidation() {
     Object.values(errorMap).forEach(({ input, prompt }) => {
@@ -106,17 +102,27 @@ async function handleSubmit() {
   }
 
   try {
-    await authStore.login({ email: emailValue, password: passwordValue });
-    router.push("/welcome");
+    isLoading.value = true;
+    setTimeout(async () => {
+      try {
+        await authStore.login({ email: emailValue, password: passwordValue });
+        await authStore.fetchUser();
+        router.push("/welcome");
+      } catch (error) {
+        generalError.value = error?.response?.data.message[0] || "An error occurred, please try again.";
+      } finally {
+        isLoading.value = false;
+        validateForm();
+      }
+    }, 3000)
   } catch (error) {
-      generalError.value = error?.response?.data || "An error occurred, please try again.";
-    }
-
-    validateForm();
+    generalError.value = error?.response?.data.message[0] || "An error occurred, please try again.";
+  }
 }
 </script>
 
 <template>
+   <Spinner v-if="isLoading" size="md" message="Logging in..." />
   <section class="card col-md-6 col-lg-5 col-xl-4 p-4 m-4">
     <form
       class="d-flex flex-column gap-2 needs-validation"
@@ -185,25 +191,10 @@ async function handleSubmit() {
       </p>
     </form>
 
-    <div v-if="showToast" class="toast-message">
-      Registration successful!
-    </div>
+    <ToastMessage v-if="showToast" message="Registration successful! You can now login." type="success" />
   </section>
 </template>
 
 <style scoped>
-.toast-message {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #28a745;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 5px;
-  font-size: 16px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  opacity: 1;
-  transition: opacity 0.5s ease-out;
-  z-index: 1000;
-}
+
 </style>

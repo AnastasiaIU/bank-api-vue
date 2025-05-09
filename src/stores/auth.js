@@ -18,7 +18,6 @@ export const useAuthStore = defineStore("auth", () => {
 
     if (response.data.token) {
       token.value = response.data.token;
-      user.value = response.data.user;
       localStorage.setItem("authToken", token.value);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token.value}`;
       return response;
