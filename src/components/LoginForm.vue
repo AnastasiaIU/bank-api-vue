@@ -123,7 +123,6 @@ async function handleSubmit() {
 
 <template>
    <Spinner v-if="isLoading" size="md" message="Logging in..." />
-
   <section class="card col-md-6 col-lg-5 col-xl-4 p-4 m-4">
     <form
       class="d-flex flex-column gap-2 needs-validation"
