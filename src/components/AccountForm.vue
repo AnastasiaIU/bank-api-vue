@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
-import Brand from '@/components/Brand.vue'
+import Brand from '@/components/shared/Brand.vue'
 
 // Access the auth store
 const authStore = useAuthStore()

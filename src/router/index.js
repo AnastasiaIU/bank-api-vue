@@ -1,50 +1,65 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { useAuthStore } from '@/stores/auth'
+import { ROUTE_NAMES } from './routes.js'
+import WelcomeView from '../views/WelcomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
-    },
-    {
-      path: '/atm',
-      name: 'atm',
-      component: () => import('../views/AtmView.vue')
+      name: ROUTE_NAMES.WELCOME,
+      component: WelcomeView,
+      meta: { guards: ['auth'] }
     },
     {
       path: '/login',
-      name: 'login',
-      component: () => import('../views/LoginView.vue')
+      name: ROUTE_NAMES.LOGIN,
+      component: () => import('../views/LoginView.vue'),
+      meta: { guards: ['guest'] }
     },
     {
       path: '/register',
-      name: 'register',
-      component: () => import('../views/RegisterView.vue')
+      name: ROUTE_NAMES.REGISTER,
+      component: () => import('../views/RegisterView.vue'),
+      meta: { guards: ['guest'] }
     },
     {
       path: '/transfer',
-      name: 'transfer',
-      component: () => import('../views/TransferFundsView.vue')
+      name: ROUTE_NAMES.TRANSFER,
+      component: () => import('../views/TransferFundsView.vue'),
+      meta: { guards: ['auth'] }
     },
     {
-      path: '/welcome',
-      name: 'welcome',
-      component: () => import('../views/WelcomeView.vue')
-    },
-    {
-      path: '/accounts/:accountId/transactions',
-      name: 'account-transactions',
-      component: () => import('../views/AccountTransactionsViews.vue')
+      path: '/transactions',
+      name: ROUTE_NAMES.TRANSACTIONS,
+      component: () => import('../views/AccountTransactionsViews.vue'),
+      meta: { guards: ['auth'] }
     },
     {
       path: '/account',
-      name: 'accountSummary',
-      component: () => import('../views/AccountView.vue')
+      name: ROUTE_NAMES.ACCOUNT,
+      component: () => import('../views/AccountView.vue'),
+      meta: { guards: ['auth'] }
     }
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+
+  const isAuth = authStore.isAuthenticated
+  const guards = to.meta.guards || []
+
+  if (guards.includes('auth') && !isAuth) {
+    return next({ name: 'login' })
+  }
+
+  if (guards.includes('guest') && isAuth) {
+    return next({ name: 'welcome' })
+  }
+
+  next()
 })
 
 export default router
