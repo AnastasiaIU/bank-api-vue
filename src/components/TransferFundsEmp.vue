@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import IbanInput from './shared/IbanInput.vue';
 import AmountInput from './shared/AmountInput.vue';
 import TextInput from './shared/TextInput.vue';
-import ToastMessage from './shared/ToastMessage.vue';
+import Toast from './shared/Toast.vue';
 import { API_ENDPOINTS } from "@/utils/config";
 import axios from 'axios';
 
@@ -14,9 +14,9 @@ const isToIbanValid = ref(false);
 const amount = ref('');
 const isValidAmount = ref(false);
 const description = ref('');
-const toastMessage = ref('');
-const toastType = ref('success');
-const showToast = ref(false);
+const toastRef = ref(null);
+const toastText = ref('');
+const toastVariant = ref('success');
 
 function disableButton() {
     return !(isFromIbanValid.value && isToIbanValid.value && isValidAmount.value);
@@ -52,9 +52,9 @@ async function transferFunds() {
 }
 
 function setToast(msg, type) {
-    toastMessage.value = msg;
-    toastType.value = type;
-    showToast.value = true;
+    toastText.value = msg;
+    toastVariant.value = type;
+    toastRef.value.displayToast();
 }
 </script>
 
@@ -69,7 +69,7 @@ function setToast(msg, type) {
             <TextInput id="description" label="Description" v-model="description" />
             <button class="btn btn-primary" @click="transferFunds" :disabled="disableButton()">Transfer</button>
         </div>
-        <ToastMessage v-if="showToast" :message="toastMessage" :type="toastType" @close="showToast = false" />
+        <Toast ref="toastRef" :text="toastText" :variant="toastVariant" />
     </section>
 </template>
 
