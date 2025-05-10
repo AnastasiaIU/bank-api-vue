@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import IbanInput from './shared/IbanInput.vue';
 import AmountInput from './shared/AmountInput.vue';
 import TextInput from './shared/TextInput.vue';
+import Toast from './shared/Toast.vue';
+import { API_ENDPOINTS } from "@/utils/config";
 import axios from 'axios';
 
 const fromAccountIban = ref('');
@@ -12,6 +14,9 @@ const isToIbanValid = ref(false);
 const amount = ref('');
 const isValidAmount = ref(false);
 const description = ref('');
+const toastRef = ref(null);
+const toastText = ref('');
+const toastVariant = ref('success');
 
 function disableButton() {
     return !(isFromIbanValid.value && isToIbanValid.value && isValidAmount.value);
@@ -23,13 +28,14 @@ async function transferFunds() {
             sourceAccount: fromAccountIban.value,
             targetAccount: toAccountIban.value,
             amount: parseFloat(amount.value),
-            description: description.value || null, 
+            description: description.value || null,
         };
 
-        const response = await axios.post('http://localhost:8080/transactions', transaction);
+        const response = await axios.post(API_ENDPOINTS.transactions, transaction);
 
         if (response.status === 201) {
-            alert('Transaction created successfully!');
+            setToast('Transaction created successfully!', 'success');
+
             fromAccountIban.value = '';
             isFromIbanValid.value = false;
             toAccountIban.value = '';
@@ -38,12 +44,17 @@ async function transferFunds() {
             isValidAmount.value = false;
             description.value = null;
         } else {
-            alert('Failed to create transaction. Please try again.');
+            setToast('Failed to create transaction. Please try again.', 'error');
         }
     } catch (error) {
-        console.error('Error creating transaction:', error);
-        alert('An error occurred while creating the transaction.');
+        setToast('An error occurred while creating the transaction.', 'error');
     }
+}
+
+function setToast(msg, type) {
+    toastText.value = msg;
+    toastVariant.value = type;
+    toastRef.value.displayToast();
 }
 </script>
 
@@ -53,9 +64,19 @@ async function transferFunds() {
         <div>
             <IbanInput id="fromIban" label="From IBAN" v-model="fromAccountIban" v-model:isValid="isFromIbanValid" />
             <IbanInput id="toIban" label="To IBAN" v-model="toAccountIban" v-model:isValid="isToIbanValid" />
-            <AmountInput id="transferAmount" label="Amount to Transfer" v-model="amount" v-model:isValid="isValidAmount" />
+            <AmountInput id="transferAmount" label="Amount to Transfer" v-model="amount"
+                v-model:isValid="isValidAmount" />
             <TextInput id="description" label="Description" v-model="description" />
             <button class="btn btn-primary" @click="transferFunds" :disabled="disableButton()">Transfer</button>
         </div>
+        <Toast ref="toastRef" :text="toastText" :variant="toastVariant" />
     </section>
 </template>
+
+<style scoped>
+.btn:disabled {
+    background-color: #ccc;
+    border: #ccc;
+    cursor: not-allowed;
+}
+</style>
