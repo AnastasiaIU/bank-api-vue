@@ -1,8 +1,8 @@
 <template>
   <section v-if="authStore.isAuthenticated" class="text-center mt-5">
-    <h1 class="display-4">Welcome, {{ user?.firstName }}!</h1>
+    <h1 class="display-4">Welcome, {{ authStore.user?.firstName }}!</h1>
     <p class="lead">
-      Your role is <strong>{{ user?.role }}</strong>
+      Your role is <strong>{{ authStore.user?.role }}</strong>
     </p>
   </section>
 </template>
@@ -14,7 +14,6 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const authStore = useAuthStore();
-const user = authStore.user;
 </script>
 
 <style scoped>
