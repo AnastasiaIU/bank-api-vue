@@ -79,10 +79,9 @@ function closeOffcanvas() {
             <path fill-rule="evenodd"
               d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
           </svg>
-          <span class="fs-6">{{ authStore.user?.firstName }} {{ authStore.user?.lastName }}</span>
+
           <span class="fs-6">{{ authStore.user?.firstName }} {{ authStore.user?.lastName }}</span>
         </button>
-
         <button class="btn btn-danger d-none d-lg-block ms-3" @click="handleLogout">
           Log out
         </button>
@@ -116,51 +115,8 @@ function closeOffcanvas() {
         </svg>
         <span class="text fs-6">{{ authStore.user?.firstName }} {{ authStore.user?.lastName }}</span>
       </div>
-
-<!-- Bank App Dropdown -->
-  <div class="accordion" id="sidebarAccordion">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingBank">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBank"
-          aria-expanded="false" aria-controls="collapseBank">
-          Bank App
-        </button>
-      </h2>
-      <div id="collapseBank" class="accordion-collapse collapse" aria-labelledby="headingBank"
-        data-bs-parent="#sidebarAccordion">
-        <div class="accordion-body p-0">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item"><router-link to="/" @click="closeOffcanvas">Welcome</router-link></li>
-            <li class="list-group-item"><router-link to="/transfer" @click="closeOffcanvas">Transfer</router-link></li>
-            <li class="list-group-item"><router-link to="/transactions" @click="closeOffcanvas">Transactions</router-link></li>
-            <li class="list-group-item"><router-link to="/account" @click="closeOffcanvas">Account</router-link></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- ATM Dropdown -->
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingATM">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseATM"
-          aria-expanded="false" aria-controls="collapseATM">
-          ATM
-        </button>
-      </h2>
-      <div id="collapseATM" class="accordion-collapse collapse" aria-labelledby="headingATM"
-        data-bs-parent="#sidebarAccordion">
-        <div class="accordion-body p-0">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item"><router-link to="/atm/login" @click="closeOffcanvas">Deposit</router-link></li>
-            <li class="list-group-item"><router-link to="/atm/withdraw" @click="closeOffcanvas">Withdraw</router-link></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-        <span class="text fs-6">{{ authStore.user?.firstName }} {{ authStore.user?.lastName }}</span>
-      </div>
-
+      </div> 
+      
 <!-- Bank App Dropdown -->
   <div class="accordion" id="sidebarAccordion">
     <div class="accordion-item">
