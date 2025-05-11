@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import IbanInput from './shared/IbanInput.vue';
-import AmountInput from './shared/AmountInput.vue';
-import TextInput from './shared/TextInput.vue';
+import IbanInput from './shared/forms/IbanInput.vue';
+import AmountInput from './shared/forms/AmountInput.vue';
+import TextInput from './shared/forms/TextInput.vue';
 import Toast from './shared/Toast.vue';
 import { API_ENDPOINTS } from "@/utils/config";
 import axios from 'axios';
