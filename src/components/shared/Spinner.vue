@@ -19,7 +19,7 @@
   
   const spinnerClass = {
     sm: "spinner-border spinner-border-sm text-primary",
-    md: "spinner-border text-primary",
+    md: "spinner-border border-md text-primary",
     lg: "spinner-border text-primary",
   }[props.size];
   </script>
