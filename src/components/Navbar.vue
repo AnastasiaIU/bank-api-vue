@@ -31,7 +31,6 @@ function closeOffcanvas() {
     }
   }
 }
-
 </script>
 
 <template>
@@ -205,6 +204,6 @@ a.router-link-active,
 a.router-link-exact-active,
 a {
   text-decoration: none !important;
+  font-weight: 500;
 }
-
 </style>
