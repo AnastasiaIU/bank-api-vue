@@ -18,7 +18,7 @@ const authStore = useAuthStore();
 
 <style scoped>
 section {
-  max-width: 600px;
+  max-width: 1000px;
   margin: auto;
   background: var(--color-background);
   color: var(--color-text);
@@ -28,5 +28,10 @@ section {
 
 h1, h2, p {
   color: var(--color-text);
+}
+
+h1 {
+  text-align: center;
+  word-break: break-word;
 }
 </style>
