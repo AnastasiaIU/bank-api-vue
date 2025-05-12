@@ -106,7 +106,6 @@ function closeOffcanvas() {
     </div>
     <div class="offcanvas-body">
       <div v-if="authStore.isAuthenticated" class="d-flex align-items-center gap-3 mb-3" @click="goToAccount" data-bs-dismiss="offcanvas">
-      <div v-if="authStore.isAuthenticated" class="d-flex align-items-center gap-3 mb-3" @click="goToAccount" data-bs-dismiss="offcanvas">
         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="var(--color-primary)"
           class="bi bi-person-circle" viewBox="0 0 16 16">
           <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
@@ -168,7 +167,6 @@ function closeOffcanvas() {
         Log in
       </router-link>
     </div>
-  </div>
 </template>
 
 <style scoped>
