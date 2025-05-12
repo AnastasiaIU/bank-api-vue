@@ -75,7 +75,6 @@ const onSubmit = handleSubmit(async (values) => {
             <BasePasswordInput name="password" label="Password" placeholder="Enter password" />
             <BasePasswordInput name="confirmPassword" label="Confirm Password" placeholder="Confirm password" />
 
-
             <button class="btn btn-primary my-3">Register</button>
             <p>
                 Already have an account?
