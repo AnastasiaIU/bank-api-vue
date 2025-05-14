@@ -38,7 +38,7 @@ watch(
         <select :id="label" v-model="localSelectedAccount" class="form-select">
             <option disabled value="">Select an account</option>
             <option v-for="account in accounts" :key="account.iban" :value="account.iban">
-                {{ account.iban }} ({{ account.balance }})
+                {{ account.iban }} (€{{ account.balance }})
             </option>
         </select>
     </div>
