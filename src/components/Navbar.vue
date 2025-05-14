@@ -1,6 +1,7 @@
 <script setup>
 import Brand from "./shared/Brand.vue";
 import Spinner from "./shared/Spinner.vue";
+import UserIcon from "@/components/icons/UserIcon.vue";
 
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
@@ -73,12 +74,7 @@ function closeOffcanvas() {
       <!-- User Info (Visible only if logged in) -->
       <div v-if="authStore.isAuthenticated" class="d-flex align-items-center gap-3 d-none d-lg-flex">
         <button class="btn btn-outline-primary d-flex align-items-center gap-2" @click="goToAccount">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="var(--color-primary)"
-            class="bi bi-person-circle" viewBox="0 0 16 16">
-            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-            <path fill-rule="evenodd"
-              d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-          </svg>
+          <UserIcon :size="24" />
 
           <span class="fs-6">{{ authStore.user?.firstName }} {{ authStore.user?.lastName }}</span>
         </button>
