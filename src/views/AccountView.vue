@@ -1,5 +1,5 @@
 <script setup>
-import AccountForm from "@/components/AccountForm.vue";
+import AccountForm from "@/components/AccountInfo.vue";
 </script>
 
 <template>
