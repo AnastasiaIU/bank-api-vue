@@ -61,11 +61,7 @@ async function transferFunds() {
 
 async function fetchAccounts() {
     try {
-        const response = await axios.get(API_ENDPOINTS.accounts, {
-            headers: {
-                Authorization: `Bearer ${authStore.token}`
-            }
-        });
+        const response = await axios.get(API_ENDPOINTS.accountsById(authStore.user.id));
         accounts.value = response.data;
     } catch (error) {
         console.error('Error fetching accounts:', error);
