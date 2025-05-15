@@ -47,6 +47,20 @@ const router = createRouter({
       name: ROUTE_NAMES.ACCOUNTS,
       component: () => import('../views/AccountsView.vue'),
       meta: { guards: ['auth', 'employee'] }
+    },
+    {
+      path: '/atm/deposit',
+      name: ROUTE_NAMES.ATM_DEPOSIT,
+      component: () => import('../views/AtmView.vue'),
+      meta: { guards: ['auth', 'customer'] },
+      props: { transactionType: 'Deposit' }
+    },
+    {
+      path: '/atm/withdraw',
+      name: ROUTE_NAMES.ATM_WITHDRAW,
+      component: () => import('../views/AtmView.vue'),
+      meta: { guards: ['auth', 'customer'] },
+      props: { transactionType: 'Withdraw' }
     }
   ],
 })
@@ -67,6 +81,10 @@ router.beforeEach((to, from, next) => {
   }
 
   if (guards.includes('employee') && !isEmployee) {
+    return next({ name: 'welcome' })
+  }
+
+  if (guards.includes('customer') && isEmployee) {
     return next({ name: 'welcome' })
   }
 

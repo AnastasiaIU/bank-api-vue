@@ -1,7 +1,7 @@
 <script setup>
 import TransferFundsEmp from '@/components/TransferFundsEmp.vue';
 import TransferFundsCus from '@/components/TransferFundsCus.vue';
-import axios from 'axios';
+import axios from '@/utils/axios';
 import { ref, onMounted } from 'vue';
 import { API_ENDPOINTS } from '@/utils/config';
 import { useAuthStore } from "@/stores/auth";

@@ -5,7 +5,7 @@ import AmountInput from './shared/forms/AmountInput.vue';
 import TextInput from './shared/forms/TextInput.vue';
 import Toast from './shared/Toast.vue';
 import { API_ENDPOINTS } from "@/utils/config";
-import axios from 'axios';
+import axios from '@/utils/axios';
 
 const fromAccountIban = ref('');
 const isFromIbanValid = ref(false);

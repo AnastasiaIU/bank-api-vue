@@ -6,6 +6,7 @@ export const API_ENDPOINTS = {
   login: `${API_BASE_AUTH_URL}/login`,
   me: `${API_BASE_AUTH_URL}/me`,
   transactions: `${API_BASE_URL}/transactions`,
+  atmTransactions: `${API_BASE_URL}/atm/transactions`,
   accountsById: (id) => `${API_BASE_URL}/users/${id}/accounts`,
-  accounts: `${API_BASE_URL}/accounts`,
+  accounts: `${API_BASE_URL}/accounts`
 };

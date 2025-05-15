@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import axios from 'axios'
+import axios from '@/utils/axios'
 import {formatEuro} from "../utils/formatters.js";
 import { API_ENDPOINTS } from "@/utils/config";
 

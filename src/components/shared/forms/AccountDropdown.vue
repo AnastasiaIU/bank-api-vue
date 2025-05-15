@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue';
+import { formatEuro } from '@/utils/formatters';
 
 const props = defineProps({
     accounts: {
@@ -7,8 +8,7 @@ const props = defineProps({
         required: true
     },
     selectedAccount: {
-        type: [String, null],
-        default: null
+        type: [String]
     },
     label: {
         type: String,
@@ -34,11 +34,11 @@ watch(
 
 <template>
     <div>
-        <label :for="label">{{ label }}</label>
+        <label :for="label" class="form-label">{{ label }}</label>
         <select :id="label" v-model="localSelectedAccount" class="form-select">
             <option disabled value="">Select an account</option>
             <option v-for="account in accounts" :key="account.iban" :value="account.iban">
-                {{ account.iban }} (€{{ account.balance }})
+                {{ account.iban }} ({{ formatEuro(account.balance) }})
             </option>
         </select>
     </div>

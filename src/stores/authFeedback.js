@@ -9,4 +9,4 @@ export const useAuthFeedbackStore = defineStore('auth-feedback', () => {
     }
 
     return { wasRegistered, setWasRegistered }
-}, { persist: true })
+}, { persist: { storage: sessionStorage } })
