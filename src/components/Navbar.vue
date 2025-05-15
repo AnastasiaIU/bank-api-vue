@@ -58,23 +58,28 @@ function closeOffcanvas() {
           </button>
           <ul class="dropdown-menu" aria-labelledby="bankDropdown">
             <li>
-              <router-link class="dropdown-item" to="/">Welcome</router-link>
+              <router-link class="dropdown-item" to="/">Home</router-link>
             </li>
-            <li>
+            <li v-if="!authStore.isEmployee && authStore.user.isApproved">
               <router-link class="dropdown-item" to="/transfer"
                 >Transfer</router-link
               >
             </li>
-            <li>
+            <li v-if="!authStore.isEmployee && authStore.user.isApproved">
               <router-link class="dropdown-item" to="/transactions"
                 >Transactions</router-link
               >
             </li>
-            <li>
-              <router-link class="dropdown-item" to="/account"
-                >Account</router-link
+            <li v-if="authStore.isEmployee">
+              <router-link class="dropdown-item" to="/accounts"
+                >All Customer Accounts</router-link
               >
-            </li>
+              </li>
+              <li v-if="authStore.isEmployee">
+              <router-link class="dropdown-item" to=""
+                >Customers Without Accounts</router-link
+              >
+              </li>
           </ul>
         </div>
 
@@ -214,22 +219,27 @@ function closeOffcanvas() {
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
                     <router-link to="/" @click="closeOffcanvas"
-                      >Welcome</router-link
+                      >Home</router-link
                     >
                   </li>
-                  <li class="list-group-item">
+                  <li v-if="!authStore.isEmployee && authStore.user.isApproved" class="list-group-item">
                     <router-link to="/transfer" @click="closeOffcanvas"
                       >Transfer</router-link
                     >
                   </li>
-                  <li class="list-group-item">
+                  <li v-if="!authStore.isEmployee && authStore.user.isApproved" class="list-group-item">
                     <router-link to="/transactions" @click="closeOffcanvas"
                       >Transactions</router-link
                     >
                   </li>
-                  <li class="list-group-item">
-                    <router-link to="/account" @click="closeOffcanvas"
-                      >Account</router-link
+                  <li v-if="authStore.isEmployee" class="list-group-item">
+                    <router-link to="/accounts" @click="closeOffcanvas"
+                      >All Customer Accounts</router-link
+                    >
+                  </li>
+                  <li v-if="authStore.isEmployee" class="list-group-item">
+                    <router-link to="" @click="closeOffcanvas"
+                      >Customers Without Accounts</router-link
                     >
                   </li>
                 </ul>

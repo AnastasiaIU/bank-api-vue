@@ -70,7 +70,7 @@ function nextPage() {
     v-if="authStore.isAuthenticated && authStore.isEmployee"
     class="container my-5"
   >
-    <h1 class="text-center mb-4">Customer Accounts</h1>
+    <h1 class="h2 text-center mb-4">Customer Accounts</h1>
 
     <div v-if="error" class="alert alert-danger text-center">{{ error }}</div>
 
@@ -87,41 +87,50 @@ function nextPage() {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(account, index) in accounts" :key="index">
-          <td>{{ account.firstName }} {{ account.lastName }}</td>
-          <td>{{ account.iban }}</td>
-          <td>{{ account.type }}</td>
-          <td>{{ formatEuro(account.balance) }}</td>
+        <template v-if="accounts.length > 0">
+          <tr v-for="(account, index) in accounts" :key="index">
+            <td>{{ account.firstName }} {{ account.lastName }}</td>
+            <td>{{ account.iban }}</td>
+            <td>{{ account.type }}</td>
+            <td>{{ formatEuro(account.balance) }}</td>
+          </tr>
+        </template>
+        <tr v-else>
+          <td colspan="4" class="text-center text-muted fw-semibold">
+            No accounts found.
+          </td>
         </tr>
       </tbody>
     </table>
 
-    <nav aria-label="Page navigation example" class="d-flex justify-content-center mt-4 align-items-center gap-3">
-  <button
-    class="btn btn-outline-primary"
-    @click="previousPage"
-    :disabled="isFirstPage"
-    title="Previous Page"
-  >
-    <!-- You can add SVG or font-awesome icon here -->
-     <i class="bi bi-chevron-left"></i>
-    Previous
-  </button>
+    <nav
+      aria-label="Page navigation example"
+      class="d-flex justify-content-center mt-4 align-items-center gap-3"
+    >
+      <button
+        class="btn btn-outline-primary"
+        @click="previousPage"
+        :disabled="isFirstPage"
+        title="Previous Page"
+      >
+        <!-- You can add SVG or font-awesome icon here -->
+        <i class="bi bi-chevron-left"></i>
+        Previous
+      </button>
 
-  <span class="text-muted fw-semibold">
-    Page {{ page + 1 }} of {{ totalPages }}
-  </span>
+      <span class="text-muted fw-semibold">
+        Page {{ page + 1 }} of {{ totalPages }}
+      </span>
 
-  <button
-    class="btn btn-outline-primary"
-    @click="nextPage"
-    :disabled="isLastPage"
-    title="Next Page"
-  >
-    Next
-    <i class="bi bi-chevron-right"></i>
-  </button>
-</nav>
-
+      <button
+        class="btn btn-outline-primary"
+        @click="nextPage"
+        :disabled="isLastPage"
+        title="Next Page"
+      >
+        Next
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </nav>
   </div>
 </template>
