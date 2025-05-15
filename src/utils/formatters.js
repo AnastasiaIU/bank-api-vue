@@ -4,3 +4,7 @@ export function formatEuro(amount) {
     currency: 'EUR'
   }).format(amount)
 }
+
+export function parseEuro(value) {
+  return parseFloat(value.replace(/[^\d,.-]/g, '').replace(',', '.'));
+}

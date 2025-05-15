@@ -1,16 +1,18 @@
 <script setup>
-import Spinner from "./shared/Spinner.vue";
-import Brand from './shared/Brand.vue'
+import Spinner from "@/components/shared/Spinner.vue";
+import Brand from '@/components/shared/Brand.vue'
+
+import BaseInput from '@/components/shared/forms/BaseInput.vue'
+import BasePasswordInput from '@/components/shared/forms/BasePasswordInput.vue'
+
+import registerSchema from '@/schemas/registerSchema'
+
+import { useAuthFeedbackStore } from '@/stores/authFeedback'
+import { useAuthStore } from '@/stores/auth'
 
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useForm } from 'vee-validate'
-
-import { useAuthStore } from '@/stores/auth'
-import { useAuthFeedbackStore } from '@/stores/authFeedback'
-import BaseInput from '@/components/shared/forms/BaseInput.vue'
-import BasePasswordInput from '@/components/shared/forms/BasePasswordInput.vue'
-import registerSchema from '@/schemas/registerSchema'
 
 const router = useRouter()
 const authStore = useAuthStore()

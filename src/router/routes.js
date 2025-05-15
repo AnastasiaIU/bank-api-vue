@@ -4,5 +4,7 @@ export const ROUTE_NAMES = {
     REGISTER: 'register',
     TRANSFER: 'transfer',
     TRANSACTIONS: 'transactions',
-    ACCOUNT: 'account'
+    ACCOUNT: 'account',
+    ATM_DEPOSIT: 'atm-deposit',
+    ATM_WITHDRAW: 'atm-withdraw'
 }

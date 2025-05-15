@@ -1,8 +1,9 @@
 import { defineStore } from "pinia";
 
-import axios from "axios";
+import axios from '@/utils/axios'
 
 import { API_ENDPOINTS } from "@/utils/config";
+import { useAccountStore } from '@/stores/account'
 
 import { ref, computed } from "vue";
 
@@ -13,6 +14,8 @@ export const useAuthStore = defineStore("auth", () => {
   const isAuthenticated = computed(() => !!token.value);
   const isEmployee = computed(() => user.value?.role === "EMPLOYEE");
 
+  const accountStore = useAccountStore();
+
   async function login(credentials) {
     const response = await axios.post(API_ENDPOINTS.login, credentials);
 
@@ -21,6 +24,7 @@ export const useAuthStore = defineStore("auth", () => {
       localStorage.setItem("authToken", token.value);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token.value}`;
       await fetchUser();
+      await accountStore.fetchUserAccounts(user.value.id);
       return response;
     }
   }
@@ -29,6 +33,15 @@ export const useAuthStore = defineStore("auth", () => {
     user.value = null;
     token.value = null;
     localStorage.removeItem("authToken");
+
+    Object.keys(localStorage)
+      .filter(key => key.startsWith('auth'))
+      .forEach(key => localStorage.removeItem(key))
+
+    Object.keys(localStorage)
+      .filter(key => key.startsWith('pinia-'))
+      .forEach(key => localStorage.removeItem(key))
+
     delete axios.defaults.headers.common["Authorization"];
   }
 
@@ -39,6 +52,7 @@ export const useAuthStore = defineStore("auth", () => {
       axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
       try {
         await fetchUser();
+        await accountStore.fetchUserAccounts(user.value.id);
       } catch {
         logout();
       }
@@ -77,4 +91,4 @@ export const useAuthStore = defineStore("auth", () => {
     initializeAuth,
     fetchUser,
   };
-});
+}, { persist: true });

@@ -80,7 +80,7 @@ function closeOffcanvas() {
         </div>
 
         <!-- ATM Dropdown -->
-        <div class="dropdown d-none d-lg-block">
+        <div v-if="!authStore.isEmployee && authStore.user.isApproved" class="dropdown d-none d-lg-block">
           <button
             class="btn btn-outline-primary dropdown-toggle"
             type="button"
@@ -91,7 +91,7 @@ function closeOffcanvas() {
             ATM
           </button>
           <ul class="dropdown-menu" aria-labelledby="atmDropdown">
-            <li><router-link class="dropdown-item" to="/atm/login">Deposit</router-link></li>
+            <li><router-link class="dropdown-item" to="/atm/deposit">Deposit</router-link></li>
             <li><router-link class="dropdown-item" to="/atm/withdraw">Withdraw</router-link></li>
           </ul>
         </div>
@@ -174,7 +174,7 @@ function closeOffcanvas() {
 
         <div class="accordion" id="sidebarAccordion">
           <!-- Bank App -->
-          <div class="accordion-item mb-2">
+          <div class="accordion-item">
             <h2 class="accordion-header" id="headingBank">
               <button
                 class="accordion-button collapsed"
@@ -222,7 +222,7 @@ function closeOffcanvas() {
           </div>
 
           <!-- ATM -->
-          <div class="accordion-item">
+          <div v-if="!authStore.isEmployee && authStore.user.isApproved" class="accordion-item">
             <h2 class="accordion-header" id="headingATM">
               <button
                 class="accordion-button collapsed"
@@ -244,7 +244,7 @@ function closeOffcanvas() {
               <div class="accordion-body p-0">
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
-                    <router-link to="/atm/login" @click="closeOffcanvas">Deposit</router-link>
+                    <router-link to="/atm/deposit" @click="closeOffcanvas">Deposit</router-link>
                   </li>
                   <li class="list-group-item">
                     <router-link to="/atm/withdraw" @click="closeOffcanvas">Withdraw</router-link>

@@ -24,3 +24,10 @@ const props = defineProps({
   route: { type: String, required: true },
 })
 </script>
+
+<style scoped>
+.card-header {
+  background-color: transparent;
+  border: none;
+}
+</style>

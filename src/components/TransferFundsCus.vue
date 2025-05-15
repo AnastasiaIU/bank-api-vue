@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import axios from '@/utils/axios';
 import { useAuthStore } from '@/stores/auth';
 import { API_ENDPOINTS } from '@/utils/config';
 import AmountInput from './shared/forms/AmountInput.vue';
