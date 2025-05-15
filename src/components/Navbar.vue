@@ -47,7 +47,7 @@ function closeOffcanvas() {
           <Brand />
         </a>
 
-        <!-- Bank Dropdown -->
+        <!-- Bank App Dropdown -->
         <div class="dropdown d-none d-lg-block">
           <button
             class="btn btn-outline-primary dropdown-toggle me-2"
@@ -97,7 +97,6 @@ function closeOffcanvas() {
         </div>
       </div>
 
-      <!-- Authenticated User (Desktop) -->
       <div
         v-if="authStore.isAuthenticated"
         class="d-flex align-items-center gap-3 d-none d-lg-flex"
@@ -117,7 +116,6 @@ function closeOffcanvas() {
         </button>
       </div>
 
-      <!-- Login Button (Desktop) -->
       <router-link
         v-else
         to="/login"
@@ -160,7 +158,6 @@ function closeOffcanvas() {
       class="offcanvas-body d-flex flex-column justify-content-between h-100 px-2 py-3"
     >
       <div>
-        <!-- Authenticated User (Mobile) -->
         <div
           v-if="authStore.isAuthenticated"
           class="d-flex justify-content-center mb-3"
@@ -259,7 +256,6 @@ function closeOffcanvas() {
         </div>
       </div>
 
-      <!-- Logout/Login Button (Mobile) -->
       <div class="w-100">
         <button
           v-if="authStore.isAuthenticated"
