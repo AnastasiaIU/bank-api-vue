@@ -61,12 +61,12 @@ function closeOffcanvas() {
           <ul class="dropdown-menu" aria-labelledby="bankDropdown">
             <li><router-link class="dropdown-item" to="/">Home</router-link></li>
             <li
-              v-if="!authStore.isEmployee && authStore.user.isApproved"
+              v-if="!authStore.isEmployee && authStore.user?.isApproved"
             >
               <router-link class="dropdown-item" to="/transfer">Transfer</router-link>
             </li>
             <li
-              v-if="!authStore.isEmployee && authStore.user.isApproved"
+              v-if="!authStore.isEmployee && authStore.user?.isApproved"
             >
               <router-link class="dropdown-item" to="/transactions">Transactions</router-link>
             </li>
@@ -199,13 +199,13 @@ function closeOffcanvas() {
                     <router-link to="/" @click="closeOffcanvas">Home</router-link>
                   </li>
                   <li
-                    v-if="!authStore.isEmployee && authStore.user.isApproved"
+                    v-if="!authStore.isEmployee && authStore.user?.isApproved"
                     class="list-group-item"
                   >
                     <router-link to="/transfer" @click="closeOffcanvas">Transfer</router-link>
                   </li>
                   <li
-                    v-if="!authStore.isEmployee && authStore.user.isApproved"
+                    v-if="!authStore.isEmployee && authStore.user?.isApproved"
                     class="list-group-item"
                   >
                     <router-link to="/transactions" @click="closeOffcanvas">Transactions</router-link>
