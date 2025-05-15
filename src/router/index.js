@@ -41,6 +41,12 @@ const router = createRouter({
       name: ROUTE_NAMES.ACCOUNT,
       component: () => import('../views/AccountView.vue'),
       meta: { guards: ['auth'] }
+    },
+    {
+      path: '/accounts',
+      name: ROUTE_NAMES.ACCOUNTS,
+      component: () => import('../views/AccountsView.vue'),
+      meta: { guards: ['auth'] }
     }
   ],
 })
