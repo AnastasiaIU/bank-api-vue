@@ -16,7 +16,7 @@ const accounts = ref([])
 const combinedTotal = ref(0)
 
 async function fetchAccountDetails(id) {
-  const response = await axios.get(API_ENDPOINTS.account(id), {
+  const response = await axios.get(API_ENDPOINTS.accountsById(id), {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -33,19 +33,27 @@ onMounted(() => {
 <template>
   <div class="container min-vh-100 d-flex justify-content-center align-items-start">
     <section class="card col-md-8 col-lg-6 col-xl-5 p-4 m-4">
-      <Brand />
-      <h5 class="mb-4 text-center">Account Summary</h5>
+      <h1 class="h2 text-center">Account Summary</h1>
 
-      <div class="mb-4">
+      <div class="mb-4 mt-4">
         <p><strong>Name:</strong> {{ customer.firstName }} {{ customer.lastName }}</p>
         <p><strong>Email:</strong> {{ customer.email }}</p>
         <p><strong>Phone:</strong> {{ customer.phoneNumber }}</p>
       </div>
 
-      <div class="mb-3" v-if="accounts.length > 0">
-        <h6>Accounts:</h6>
-        <ul class="list-group">
-          <li v-for="(account, index) in accounts" :key="index" class="list-group-item d-flex justify-content-between">
+      <div class="mb-3">
+        <h6><strong>Accounts:</strong></h6>
+
+        <div v-if="accounts.length === 0" class="alert alert-info mt-4">
+          No Bank Accounts are found.
+        </div>
+
+        <ul v-else class="list-group">
+          <li
+              v-for="(account, index) in accounts"
+              :key="index"
+              class="list-group-item d-flex justify-content-between"
+          >
             <div>
               <strong>{{ account.type }} IBAN:</strong><br />
               {{ account.iban }}
@@ -58,7 +66,7 @@ onMounted(() => {
         </ul>
       </div>
 
-      <div class="mt-4 text-end" v-if="accounts.length > 0">
+      <div v-if="accounts.length > 0" class="mt-4 text-end">
         <h6>Total Balance:</h6>
         <p class="h5 text-success">{{ formatEuro(combinedTotal) }}</p>
       </div>
