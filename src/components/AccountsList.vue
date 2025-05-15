@@ -1,5 +1,4 @@
 <script setup>
-import Spinner from "./shared/Spinner.vue";
 import { useAuthStore } from "@/stores/auth";
 import { ref, onMounted, watch } from "vue";
 import axios from "axios";
