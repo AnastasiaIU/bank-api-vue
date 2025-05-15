@@ -21,7 +21,7 @@ export const useAuthStore = defineStore("auth", () => {
 
     if (response.data.token) {
       token.value = response.data.token;
-      localStorage.setItem("authToken", token.value);
+      sessionStorage.setItem("authToken", token.value);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token.value}`;
       await fetchUser();
       await accountStore.fetchUserAccounts(user.value.id);
@@ -32,21 +32,21 @@ export const useAuthStore = defineStore("auth", () => {
   function logout() {
     user.value = null;
     token.value = null;
-    localStorage.removeItem("authToken");
+    sessionStorage.removeItem("authToken");
 
-    Object.keys(localStorage)
+    Object.keys(sessionStorage)
       .filter(key => key.startsWith('auth'))
-      .forEach(key => localStorage.removeItem(key))
+      .forEach(key => sessionStorage.removeItem(key))
 
-    Object.keys(localStorage)
+    Object.keys(sessionStorage)
       .filter(key => key.startsWith('pinia-'))
-      .forEach(key => localStorage.removeItem(key))
+      .forEach(key => sessionStorage.removeItem(key))
 
     delete axios.defaults.headers.common["Authorization"];
   }
 
   async function initializeAuth() {
-    const storedToken = localStorage.getItem("authToken");
+    const storedToken = sessionStorage.getItem("authToken");
     if (storedToken) {
       token.value = storedToken;
       axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
@@ -60,7 +60,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function fetchUser() {
-    const storedToken = localStorage.getItem("authToken");
+    const storedToken = sessionStorage.getItem("authToken");
 
     if (storedToken) {
       try {
@@ -91,4 +91,4 @@ export const useAuthStore = defineStore("auth", () => {
     initializeAuth,
     fetchUser,
   };
-}, { persist: true });
+}, { persist: { storage: sessionStorage } });

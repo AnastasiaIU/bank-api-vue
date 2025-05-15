@@ -14,4 +14,4 @@ export const useAccountStore = defineStore('pinia-account', () => {
     }
 
     return { userAccounts, fetchUserAccounts }
-}, { persist: true })
+}, { persist: { storage: sessionStorage } })

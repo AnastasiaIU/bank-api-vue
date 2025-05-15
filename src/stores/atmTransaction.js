@@ -15,4 +15,4 @@ export const useAtmTransactionStore = defineStore('pinia-atm-transaction', () =>
     }
 
     return { create }
-}, { persist: true })
+}, { persist: { storage: sessionStorage } })
