@@ -1,23 +1,23 @@
 <script setup>
-import { useAuthStore } from "@/stores/auth";
 import { ref, onMounted, watch } from "vue";
 import axios from "axios";
+
+import { useAuthStore } from "@/stores/auth";
 import { API_ENDPOINTS } from "@/utils/config";
 import { formatEuro } from "../utils/formatters.js";
 
 const authStore = useAuthStore();
 
 const accounts = ref([]);
-const loading = ref(true);
-const error = ref(null);
-
-const page = ref(0);
-const pageSize = 1;
-
+const totalPages = ref(0);
+const totalElements = ref(0);
 const isLastPage = ref(false);
+const isFirstPage = ref(false);
+const error = ref(null);
+const page = ref(0);
+const pageSize = 10;
 
 async function fetchAccounts() {
-  loading.value = true;
   error.value = null;
 
   try {
@@ -28,14 +28,19 @@ async function fetchAccounts() {
       },
     });
 
-    accounts.value = response.data;
-    // If returned accounts are less than pageSize, we're on last page
-    isLastPage.value = response.data.length < pageSize;
+    accounts.value = response.data.content;
+    totalPages.value = response.data.totalPages;
+    totalElements.value = response.data.totalElements;
+    isLastPage.value = response.data.last;
+    isFirstPage.value = response.data.first;
   } catch (err) {
     error.value = "Failed to load accounts.";
     console.error(err);
-  } finally {
-    loading.value = false;
+    accounts.value = [];
+    totalPages.value = 0;
+    totalElements.value = 0;
+    isLastPage.value = true;
+    isFirstPage.value = true;
   }
 }
 
@@ -48,7 +53,7 @@ watch(page, () => {
 });
 
 function previousPage() {
-  if (page.value > 1) {
+  if (page.value > 0) {
     page.value--;
   }
 }
@@ -67,17 +72,13 @@ function nextPage() {
   >
     <h1 class="text-center mb-4">Customer Accounts</h1>
 
-    <div v-if="loading" class="d-flex justify-content-center my-5">
-      <Spinner />
-    </div>
-
     <div v-if="error" class="alert alert-danger text-center">{{ error }}</div>
 
     <table
       v-else
       class="table table-striped table-bordered text-center align-middle"
     >
-      <thead class="table-light">
+      <thead class="table-primary">
         <tr>
           <th>Customer Name</th>
           <th>IBAN</th>
@@ -95,33 +96,32 @@ function nextPage() {
       </tbody>
     </table>
 
-    <nav
-      aria-label="Page navigation example"
-      class="d-flex justify-content-center mt-4"
-    >
-      <ul class="pagination">
-        <li :class="['page-item', { disabled: page === 1 || loading }]">
-          <button
-            class="page-link"
-            @click="previousPage"
-            :disabled="page === 1 || loading"
-          >
-            Previous
-          </button>
-        </li>
-        <li class="page-item disabled">
-          <span class="page-link">Page {{ page }}</span>
-        </li>
-        <li :class="['page-item', { disabled: isLastPage || loading }]">
-          <button
-            class="page-link"
-            @click="nextPage"
-            :disabled="isLastPage || loading"
-          >
-            Next
-          </button>
-        </li>
-      </ul>
-    </nav>
+    <nav aria-label="Page navigation example" class="d-flex justify-content-center mt-4 align-items-center gap-3">
+  <button
+    class="btn btn-outline-primary"
+    @click="previousPage"
+    :disabled="isFirstPage"
+    title="Previous Page"
+  >
+    <!-- You can add SVG or font-awesome icon here -->
+     <i class="bi bi-chevron-left"></i>
+    Previous
+  </button>
+
+  <span class="text-muted fw-semibold">
+    Page {{ page + 1 }} of {{ totalPages }}
+  </span>
+
+  <button
+    class="btn btn-outline-primary"
+    @click="nextPage"
+    :disabled="isLastPage"
+    title="Next Page"
+  >
+    Next
+    <i class="bi bi-chevron-right"></i>
+  </button>
+</nav>
+
   </div>
 </template>
