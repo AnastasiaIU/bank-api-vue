@@ -1,17 +1,53 @@
 <template>
   <section v-if="authStore.isAuthenticated" class="text-center mt-5">
     <h1 class="display-4">Welcome, {{ authStore.user?.firstName }}!</h1>
-    <p class="lead">
-      Your role is <strong>{{ authStore.user?.role }}</strong>
-    </p>
+
+    <!-- Employee View -->
+    <div v-if="authStore.isEmployee" class="mt-4">
+      <div class="row row-cols-1 row-cols-md-2 g-4 mt-3 justify-content-center">
+        <Card
+          title="All Customer Accounts"
+          subtitle="View all customer bank accounts"
+          route="/accounts"
+        />
+        <Card
+          title="Customers Without Accounts"
+          subtitle="View and manage all customers who do not yet have accounts"
+          route=""
+        />
+      </div>
+    </div>
+
+    <!-- Approved Customer -->
+    <div v-else-if="authStore.user?.isApproved" class="mt-3">
+      <div class="row row-cols-1 row-cols-md-2 g-4 mt-3 justify-content-center">
+        <Card
+          title="Tranfer Funds"
+          subtitle="Send money quickly and securely to other accounts"
+          route="/transfer"
+        />
+
+        <Card
+          title="Transaction History"
+          subtitle="Review your past transactions and account activities"
+          route="/transactions"
+        />
+      </div>
+    </div>
+
+    <!-- Not Approved Customer -->
+    <div v-else class="mt-3">
+      <p class="fw-semibold">
+        You're not approved yet. Please wait for approval from an employee to
+        access all banking features.
+      </p>
+    </div>
   </section>
 </template>
 
 <script setup>
 import { useAuthStore } from "@/stores/auth";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
+import Card from "@/components/shared/WelcomePageCard.vue";
 
 const authStore = useAuthStore();
 </script>
@@ -26,7 +62,9 @@ section {
   border-radius: 10px;
 }
 
-h1, h2, p {
+h1,
+h2,
+p {
   color: var(--color-text);
 }
 

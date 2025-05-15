@@ -46,15 +46,16 @@ const router = createRouter({
       path: '/accounts',
       name: ROUTE_NAMES.ACCOUNTS,
       component: () => import('../views/AccountsView.vue'),
-      meta: { guards: ['auth'] }
+      meta: { guards: ['auth', 'employee'] }
     }
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
   const isAuth = authStore.isAuthenticated
+  const isEmployee = authStore.isEmployee
   const guards = to.meta.guards || []
 
   if (guards.includes('auth') && !isAuth) {
@@ -62,6 +63,10 @@ router.beforeEach((to, from, next) => {
   }
 
   if (guards.includes('guest') && isAuth) {
+    return next({ name: 'welcome' })
+  }
+
+  if (guards.includes('employee') && !isEmployee) {
     return next({ name: 'welcome' })
   }
 
