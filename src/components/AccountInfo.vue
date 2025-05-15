@@ -2,7 +2,6 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
-import Brand from '@/components/shared/Brand.vue'
 import {formatEuro} from "../utils/formatters.js";
 import { API_ENDPOINTS } from "@/utils/config";
 
@@ -45,7 +44,7 @@ onMounted(() => {
         <h6><strong>Accounts:</strong></h6>
 
         <div v-if="accounts.length === 0" class="alert alert-info mt-4">
-          No Bank Accounts are found.
+          No bank accounts are found.
         </div>
 
         <ul v-else class="list-group">
