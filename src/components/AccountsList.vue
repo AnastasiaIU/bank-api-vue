@@ -113,7 +113,6 @@ function nextPage() {
         :disabled="isFirstPage"
         title="Previous Page"
       >
-        <!-- You can add SVG or font-awesome icon here -->
         <i class="bi bi-chevron-left"></i>
         Previous
       </button>

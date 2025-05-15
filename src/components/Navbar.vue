@@ -40,7 +40,7 @@ function closeOffcanvas() {
   </div>
 
   <!-- Top Navbar -->
-  <nav class="navbar navbar-light bg-light px-3 shadow-sm">
+  <nav class="navbar navbar-light bg-light px-3 shadow-sm sticky-top">
     <div class="container-fluid justify-content-between">
       <div class="d-flex gap-2 align-items-center">
         <a class="navbar-brand m-0 p-0 pe-4" href="/">
@@ -172,9 +172,7 @@ function closeOffcanvas() {
     <div
       class="offcanvas-body d-flex flex-column justify-content-between h-100 px-2 py-3"
     >
-      <!-- Top Part: User Info and Dropdowns -->
       <div>
-        <!-- User Info -->
         <!-- User Info -->
         <div
           v-if="authStore.isAuthenticated"
@@ -193,7 +191,6 @@ function closeOffcanvas() {
           </button>
         </div>
 
-        <!-- Dropdowns -->
         <div class="accordion" id="sidebarAccordion">
           <!-- Bank App Dropdown -->
           <div class="accordion-item mb-2">
@@ -286,7 +283,7 @@ function closeOffcanvas() {
         </div>
       </div>
 
-      <!-- Bottom Part: Logout/Login Button -->
+      <!-- Logout/Login Button -->
       <div class="w-100">
         <button
           v-if="authStore.isAuthenticated"

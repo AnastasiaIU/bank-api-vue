@@ -2,7 +2,7 @@
   <section v-if="authStore.isAuthenticated" class="text-center mt-5">
     <h1 class="display-4">Welcome, {{ authStore.user?.firstName }}!</h1>
 
-    <!-- Employee View -->
+    <!-- Employee -->
     <div v-if="authStore.isEmployee" class="mt-4">
       <div class="row row-cols-1 row-cols-md-2 g-4 mt-3 justify-content-center">
         <Card
