@@ -75,7 +75,6 @@ function closeOffcanvas() {
       <div v-if="authStore.isAuthenticated" class="d-flex align-items-center gap-3 d-none d-lg-flex">
         <button class="btn btn-outline-primary d-flex align-items-center gap-2" @click="goToAccount">
           <UserIcon :size="24" />
-
           <span class="fs-6">{{ authStore.user?.firstName }} {{ authStore.user?.lastName }}</span>
         </button>
         <button class="btn btn-danger d-none d-lg-block ms-3" @click="handleLogout">
@@ -100,69 +99,89 @@ function closeOffcanvas() {
     <div class="offcanvas-header">
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    <div class="offcanvas-body">
-      <div v-if="authStore.isAuthenticated" class="d-flex align-items-center gap-3 mb-3" @click="goToAccount" data-bs-dismiss="offcanvas">
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="var(--color-primary)"
-          class="bi bi-person-circle" viewBox="0 0 16 16">
-          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-          <path fill-rule="evenodd"
-            d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-        </svg>
-        <span class="text fs-6">{{ authStore.user?.firstName }} {{ authStore.user?.lastName }}</span>
-      </div>
-      </div> 
-      
-<!-- Bank App Dropdown -->
-  <div class="accordion" id="sidebarAccordion">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingBank">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBank"
-          aria-expanded="false" aria-controls="collapseBank">
-          Bank App
-        </button>
-      </h2>
-      <div id="collapseBank" class="accordion-collapse collapse" aria-labelledby="headingBank"
-        data-bs-parent="#sidebarAccordion">
-        <div class="accordion-body p-0">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item"><router-link to="/" @click="closeOffcanvas">Welcome</router-link></li>
-            <li class="list-group-item"><router-link to="/transfer" @click="closeOffcanvas">Transfer</router-link></li>
-            <li class="list-group-item"><router-link to="/transactions" @click="closeOffcanvas">Transactions</router-link></li>
-            <li class="list-group-item"><router-link to="/account" @click="closeOffcanvas">Account</router-link></li>
-          </ul>
+
+    <div class="offcanvas-body d-flex flex-column justify-content-between h-100 px-2 py-3">
+
+  <!-- Top Part: User Info and Dropdowns -->
+  <div>
+    <!-- User Info -->
+   <!-- User Info -->
+<div v-if="authStore.isAuthenticated" class="d-flex justify-content-center mb-3">
+  <button
+    class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2"
+    @click="goToAccount"
+    data-bs-dismiss="offcanvas"
+  >
+    <UserIcon :size="24" />
+    <span class="fs-6">{{ authStore.user?.firstName }} {{ authStore.user?.lastName }}</span>
+  </button>
+</div>
+
+    <!-- Dropdowns -->
+    <div class="accordion" id="sidebarAccordion">
+      <!-- Bank App Dropdown -->
+      <div class="accordion-item mb-2">
+        <h2 class="accordion-header" id="headingBank">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseBank" aria-expanded="false" aria-controls="collapseBank">
+            Bank App
+          </button>
+        </h2>
+        <div id="collapseBank" class="accordion-collapse collapse" aria-labelledby="headingBank"
+          data-bs-parent="#sidebarAccordion">
+          <div class="accordion-body p-0">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><router-link to="/" @click="closeOffcanvas">Welcome</router-link></li>
+              <li class="list-group-item"><router-link to="/transfer" @click="closeOffcanvas">Transfer</router-link></li>
+              <li class="list-group-item"><router-link to="/transactions" @click="closeOffcanvas">Transactions</router-link></li>
+              <li class="list-group-item"><router-link to="/account" @click="closeOffcanvas">Account</router-link></li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- ATM Dropdown -->
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingATM">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseATM"
-          aria-expanded="false" aria-controls="collapseATM">
-          ATM
-        </button>
-      </h2>
-      <div id="collapseATM" class="accordion-collapse collapse" aria-labelledby="headingATM"
-        data-bs-parent="#sidebarAccordion">
-        <div class="accordion-body p-0">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item"><router-link to="/atm/login" @click="closeOffcanvas">Deposit</router-link></li>
-            <li class="list-group-item"><router-link to="/atm/withdraw" @click="closeOffcanvas">Withdraw</router-link></li>
-          </ul>
+      <!-- ATM Dropdown -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingATM">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseATM" aria-expanded="false" aria-controls="collapseATM">
+            ATM
+          </button>
+        </h2>
+        <div id="collapseATM" class="accordion-collapse collapse" aria-labelledby="headingATM"
+          data-bs-parent="#sidebarAccordion">
+          <div class="accordion-body p-0">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><router-link to="/atm/login" @click="closeOffcanvas">Deposit</router-link></li>
+              <li class="list-group-item"><router-link to="/atm/withdraw" @click="closeOffcanvas">Withdraw</router-link></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-      <button v-if="authStore.isAuthenticated" class="btn btn-sm btn-danger w-100 mt-3" @click="handleLogout"
-        data-bs-dismiss="offcanvas">
-        Log out
-      </button>
+  <!-- Bottom Part: Logout/Login Button -->
+  <div class="w-100">
+    <button
+      v-if="authStore.isAuthenticated"
+      class="btn btn-sm btn-danger w-100 mt-3"
+      @click="handleLogout"
+      data-bs-dismiss="offcanvas"
+    >
+      Log out
+    </button>
 
-      <router-link v-else to="/login" class="btn btn-sm btn-outline-primary w-100 mt-3">
-        Log in
-      </router-link>
-    </div>
+    <router-link
+      v-else
+      to="/login"
+      class="btn btn-sm btn-outline-primary w-100 mt-3"
+    >
+      Log in
+    </router-link>
+  </div>
+</div>
+  </div>
 </template>
 
 <style scoped>
