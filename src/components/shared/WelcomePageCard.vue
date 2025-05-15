@@ -10,7 +10,6 @@
         </div>
       <div class="card-body">
         <p class="card-subtitle mb-3 fw-normal">{{ subtitle }}</p>
-        <slot />
       </div>
     </router-link>
   </div>
