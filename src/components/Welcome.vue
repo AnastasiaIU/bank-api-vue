@@ -48,6 +48,7 @@
 <script setup>
 import { useAuthStore } from "@/stores/auth";
 import Card from "@/components/shared/WelcomePageCard.vue";
+import Card from "@/components/shared/WelcomePageCard.vue";
 
 const authStore = useAuthStore();
 </script>
@@ -62,6 +63,9 @@ section {
   border-radius: 10px;
 }
 
+h1,
+h2,
+p {
 h1,
 h2,
 p {

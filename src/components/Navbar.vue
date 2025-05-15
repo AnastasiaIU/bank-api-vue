@@ -22,6 +22,7 @@ function handleLogout() {
 
 function goToAccount() {
   router.push("/account");
+  router.push("/account");
 }
 
 function closeOffcanvas() {
@@ -54,9 +55,39 @@ function closeOffcanvas() {
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
+          <button
+            class="btn btn-outline-primary dropdown-toggle me-2"
+            type="button"
+            id="bankDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
             Bank App
           </button>
           <ul class="dropdown-menu" aria-labelledby="bankDropdown">
+            <li>
+              <router-link class="dropdown-item" to="/">Home</router-link>
+            </li>
+            <li v-if="!authStore.isEmployee && authStore.user.isApproved">
+              <router-link class="dropdown-item" to="/transfer"
+                >Transfer</router-link
+              >
+            </li>
+            <li v-if="!authStore.isEmployee && authStore.user.isApproved">
+              <router-link class="dropdown-item" to="/transactions"
+                >Transactions</router-link
+              >
+            </li>
+            <li v-if="authStore.isEmployee">
+              <router-link class="dropdown-item" to="/accounts"
+                >All Customer Accounts</router-link
+              >
+              </li>
+              <li v-if="authStore.isEmployee">
+              <router-link class="dropdown-item" to=""
+                >Customers Without Accounts</router-link
+              >
+              </li>
             <li>
               <router-link class="dropdown-item" to="/">Home</router-link>
             </li>
@@ -91,9 +122,26 @@ function closeOffcanvas() {
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
+          <button
+            class="btn btn-outline-primary dropdown-toggle"
+            type="button"
+            id="atmDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
             ATM
           </button>
           <ul class="dropdown-menu" aria-labelledby="atmDropdown">
+            <li>
+              <router-link class="dropdown-item" to="/atm/login"
+                >Deposit</router-link
+              >
+            </li>
+            <li>
+              <router-link class="dropdown-item" to="/atm/withdraw"
+                >Withdraw</router-link
+              >
+            </li>
             <li>
               <router-link class="dropdown-item" to="/atm/login"
                 >Deposit</router-link
@@ -117,12 +165,28 @@ function closeOffcanvas() {
           class="btn btn-outline-primary d-flex align-items-center gap-2"
           @click="goToAccount"
         >
+      <div
+        v-if="authStore.isAuthenticated"
+        class="d-flex align-items-center gap-3 d-none d-lg-flex"
+      >
+        <button
+          class="btn btn-outline-primary d-flex align-items-center gap-2"
+          @click="goToAccount"
+        >
           <UserIcon :size="24" />
           <span class="fs-6"
             >{{ authStore.user?.firstName }}
             {{ authStore.user?.lastName }}</span
           >
+          <span class="fs-6"
+            >{{ authStore.user?.firstName }}
+            {{ authStore.user?.lastName }}</span
+          >
         </button>
+        <button
+          class="btn btn-danger d-none d-lg-block ms-3"
+          @click="handleLogout"
+        >
         <button
           class="btn btn-danger d-none d-lg-block ms-3"
           @click="handleLogout"
@@ -136,10 +200,22 @@ function closeOffcanvas() {
         to="/login"
         class="btn btn-md btn-outline-primary d-none d-lg-block"
       >
+      <router-link
+        v-else
+        to="/login"
+        class="btn btn-md btn-outline-primary d-none d-lg-block"
+      >
         Log in
       </router-link>
 
       <!-- Hamburger Menu Toggle -->
+      <button
+        class="navbar-toggler d-lg-none"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasRight"
+        aria-controls="offcanvasRight"
+      >
       <button
         class="navbar-toggler d-lg-none"
         type="button"
@@ -160,7 +236,20 @@ function closeOffcanvas() {
     ref="offcanvasRef"
     aria-labelledby="offcanvasRightLabel"
   >
+  <div
+    class="offcanvas offcanvas-end"
+    tabindex="-1"
+    id="offcanvasRight"
+    ref="offcanvasRef"
+    aria-labelledby="offcanvasRightLabel"
+  >
     <div class="offcanvas-header">
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="offcanvas"
+        aria-label="Close"
+      ></button>
       <button
         type="button"
         class="btn-close"
@@ -282,6 +371,44 @@ function closeOffcanvas() {
           </div>
         </div>
       </div>
+          <!-- ATM Dropdown -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingATM">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseATM"
+                aria-expanded="false"
+                aria-controls="collapseATM"
+              >
+                ATM
+              </button>
+            </h2>
+            <div
+              id="collapseATM"
+              class="accordion-collapse collapse"
+              aria-labelledby="headingATM"
+              data-bs-parent="#sidebarAccordion"
+            >
+              <div class="accordion-body p-0">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <router-link to="/atm/login" @click="closeOffcanvas"
+                      >Deposit</router-link
+                    >
+                  </li>
+                  <li class="list-group-item">
+                    <router-link to="/atm/withdraw" @click="closeOffcanvas"
+                      >Withdraw</router-link
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Logout/Login Button -->
       <div class="w-100">
@@ -294,6 +421,16 @@ function closeOffcanvas() {
           Log out
         </button>
 
+        <router-link
+          v-else
+          to="/login"
+          class="btn btn-md btn-outline-primary w-100 mt-3"
+        >
+          Log in
+        </router-link>
+      </div>
+    </div>
+  </div>
         <router-link
           v-else
           to="/login"
