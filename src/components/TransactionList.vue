@@ -21,15 +21,8 @@ const filters = ref({
 })
 
 function clearFilters() {
-  filters.value = {
-    onDate: '',
-    before: '',
-    after: '',
-    amount: '',
-    comparison: '',
-    sourceIban: '',
-    targetIban: ''
-  }}
+  Object.keys(filters.value).forEach(k => (filters.value[k] = ''))
+}
 
 onMounted(async () => {
     await fetchAccounts()
@@ -61,7 +54,7 @@ async function fetchTransactions() {
       }
     }
 
-    const url = `${API_ENDPOINTS.accountTransactions(selectedAccount.value.id)}?${params.toString()}`
+    const url = `${API_ENDPOINTS.accountTransactionsbyId(selectedAccount.value.id)}?${params.toString()}`
     const response = await axios.get(url)
     transactions.value = response.data
   } catch (error) {
