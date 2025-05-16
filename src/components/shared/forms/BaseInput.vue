@@ -10,7 +10,7 @@ const props = defineProps({
     transform: String
 })
 
-const { value, errorMessage, handleBlur, setValue } = useField(props.name)
+const { value, errorMessage, handleBlur } = useField(props.name)
 
 function applyTransform(event) {
     let raw = event.target.value
@@ -20,8 +20,7 @@ function applyTransform(event) {
     }
 
     if (props.type === 'currency') {
-        const numericValue = parseEuro(raw)
-        setValue(numericValue)
+        value.value = raw
     } else {
         value.value = raw
     }
@@ -38,7 +37,7 @@ function handleCurrencyBlur() {
 }
 
 function handleFocus(event) {
-    if (props.type === 'currency') {
+    if (props.type === 'currency' && event.target.value.trim() !== "") {
         const raw = parseEuro(event.target.value)
         value.value = raw.toString()
     }

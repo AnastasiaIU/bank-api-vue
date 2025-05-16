@@ -11,18 +11,27 @@ const props = defineProps({
 })
 
 const showToast = ref(false)
+const toastText = ref(props.text)
+const toastVariant = ref(props.variant)
 
 function displayToast() {
     showToast.value = true
     setTimeout(() => (showToast.value = false), 3000)
 }
 
-defineExpose({ displayToast })
+function setToast(text, variant = 'info') {
+    toastText.value = text
+    toastVariant.value = variant
+    displayToast()
+}
+
+defineExpose({ displayToast, setToast })
+
 </script>
 
 <template>
-    <div v-if="showToast" :class="['toast-message', `toast-${variant}`]" role="alert" aria-live="assertive"
-        aria-atomic="true">{{ text }}</div>
+    <div v-if="showToast" :class="['toast-message', `toast-${toastVariant}`]" role="alert" aria-live="assertive"
+        aria-atomic="true">{{ toastText }}</div>
 </template>
 
 <style scoped>
