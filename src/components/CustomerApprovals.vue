@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
+import {API_ENDPOINTS} from "@/utils/config.js";
 
 const authStore = useAuthStore()
 const token = authStore.token
@@ -9,28 +10,20 @@ const token = authStore.token
 const users = ref([])
 
 const fetchPendingUsers = async () => {
-  try {
-    const res = await axios.get('http://localhost:8080/users/pending', {
+    const res = await axios.get(API_ENDPOINTS.usersPending, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     })
     users.value = res.data
-  } catch (err) {
-    console.error('Error fetching pending users:', err)
-  }
 }
 
 const updateApproval = async (userId, status) => {
-  try {
-    await axios.put(`http://localhost:8080/users/${userId}/approval`,
+    await axios.put(API_ENDPOINTS.usersApproval(userId), {},
         { approvalStatus: status },
         { headers: { Authorization: `Bearer ${token}` } }
     )
     users.value = users.value.filter(u => u.id !== userId)
-  } catch (err) {
-    console.error(`Error updating approval for user ${userId}:`, err)
-  }
 }
 
 onMounted(() => {
@@ -51,7 +44,7 @@ onMounted(() => {
         <table class="table table-bordered align-middle table-hover mb-0">
           <thead class="table-light sticky-top">
           <tr>
-            <th>#</th>
+            <th> </th>
             <th>Full Name</th>
             <th>Email</th>
             <th>Phone</th>

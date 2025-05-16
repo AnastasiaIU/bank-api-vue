@@ -80,7 +80,7 @@ function closeOffcanvas() {
               <router-link class="dropdown-item" to="">Customers Without Accounts</router-link>
             </li>
             <li v-if="authStore.isEmployee">
-              <router-link class="dropdown-item" to="/customers/pending">Manage Accounts</router-link>
+              <router-link class="dropdown-item" to="/customers/review">Manage Accounts</router-link>
             </li>
           </ul>
         </div>
