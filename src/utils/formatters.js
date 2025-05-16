@@ -6,5 +6,7 @@ export function formatEuro(amount) {
 }
 
 export function parseEuro(value) {
-  return parseFloat(value.replace(/[^\d,.-]/g, '').replace(',', '.'));
+  if (typeof value === 'number') return value
+  if (!value) return 0
+  return parseFloat(value.replace(/[^\d,-]/g, '').replace(',', '.')) || 0
 }
