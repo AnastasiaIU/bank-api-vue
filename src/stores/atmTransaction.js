@@ -14,5 +14,10 @@ export const useAtmTransactionStore = defineStore('pinia-atm-transaction', () =>
         return response
     }
 
-    return { create }
+    async function getById(id) {
+        const response = await axios.get(API_ENDPOINTS.atmTransactionsById(id))
+        return response.data
+    }
+
+    return { create, getById }
 }, { persist: { storage: sessionStorage } })
