@@ -6,5 +6,6 @@ export const ROUTE_NAMES = {
     TRANSACTIONS: 'transactions',
     ACCOUNT: 'account',
     ATM_DEPOSIT: 'atm-deposit',
-    ATM_WITHDRAW: 'atm-withdraw'
+    ATM_WITHDRAW: 'atm-withdraw',
+    ACCOUNTS: 'accounts'
 }
