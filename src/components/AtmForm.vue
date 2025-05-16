@@ -6,6 +6,7 @@ import BaseInput from '@/components/shared/forms/BaseInput.vue'
 
 import atmSchema from "@/schemas/atmSchema"
 
+import { useAuthStore } from "@/stores/auth"
 import { useAccountStore } from '@/stores/account'
 import { useAtmTransactionStore } from '@/stores/atmTransaction'
 
@@ -15,6 +16,10 @@ import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useForm } from 'vee-validate'
 
+const POLL_INTERVAL = 2000;
+const POLL_TIMEOUT = 10000;
+
+const authStore = useAuthStore();
 const accountStore = useAccountStore();
 const atmTransactionStore = useAtmTransactionStore();
 
