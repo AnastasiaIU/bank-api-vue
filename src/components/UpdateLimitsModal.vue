@@ -8,6 +8,7 @@
       role="dialog"
     >
       <div class="modal-dialog modal-dialog-centered">
+        <form @submit.prevent="onSubmit">
         <div class="modal-content">
           <form @submit.prevent="onSubmit">
             <div class="modal-header">
@@ -50,6 +51,7 @@
             </div>
           </form>
         </div>
+         </form>
       </div>
     </div>
     <div class="modal-backdrop fade show"></div>
