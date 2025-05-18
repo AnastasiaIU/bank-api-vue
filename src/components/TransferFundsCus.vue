@@ -81,7 +81,7 @@ function setToast(msg, type) {
 
 <template>
     <section class="card col-md-6 col-lg-5 col-xl-4 p-4 m-4">
-        <h1 class="text-center">Transfer Funds</h1>
+        <h1 class="h2 text-center">Transfer Funds</h1>
         <div>
             <AccountDropdown :accounts="accounts" v-model:selectedAccount="fromAccount" label="From Account" />
             <AccountDropdown :accounts="accounts" v-model:selectedAccount="toAccount" label="To Account" />

@@ -61,6 +61,12 @@ const router = createRouter({
       component: () => import('../views/AtmView.vue'),
       meta: { guards: ['auth', 'customer'] },
       props: { transactionType: 'Withdraw' }
+    },
+    {
+      path: '/lookup',
+      name: ROUTE_NAMES.LOOKUP,
+      component: () => import('../views/LookupView.vue'),
+      meta: { guards: ['auth', 'customer'] }
     }
   ],
 })
