@@ -17,8 +17,6 @@ const amount = ref('');
 const isValidAmount = ref(false);
 const description = ref('');
 const toastRef = ref(null);
-const toastText = ref('');
-const toastVariant = ref('success');
 
 function disableButton() {
     return (
@@ -42,7 +40,7 @@ async function transferFunds() {
         const response = await axios.post(API_ENDPOINTS.transactions, transaction);
 
         if (response.status === 201) {
-            setToast('Transaction created successfully!', 'success');
+            toastRef.value.setToast('Transaction created successfully!', 'success');
 
             fromAccount.value = null;
             toAccount.value = null;
@@ -52,10 +50,10 @@ async function transferFunds() {
 
             await fetchAccounts();
         } else {
-            setToast('Failed to create transaction. Please try again.', 'error');
+            toastRef.value.setToast('Failed to create transaction. Please try again.', 'error');
         }
     } catch (error) {
-        setToast('An error occurred while creating the transaction.', 'error');
+        toastRef.value.setToast('An error occurred while creating the transaction.', 'error');
     }
 }
 
@@ -71,12 +69,6 @@ async function fetchAccounts() {
 onMounted(() => {
     fetchAccounts();
 });
-
-function setToast(msg, type) {
-    toastText.value = msg;
-    toastVariant.value = type;
-    toastRef.value.displayToast();
-}
 </script>
 
 <template>
@@ -90,7 +82,7 @@ function setToast(msg, type) {
             <TextInput id="description" label="Description" v-model="description" />
             <button class="btn btn-primary" @click="transferFunds" :disabled="disableButton()">Transfer</button>
         </div>
-        <Toast ref="toastRef" :text="toastText" :variant="toastVariant" />
+        <Toast ref="toastRef" />
     </section>
 </template>
 
