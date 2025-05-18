@@ -7,6 +7,7 @@ import { useAccountStore } from "@/stores/account.js";
 import { API_ENDPOINTS } from "@/utils/config";
 import { formatEuro } from "../utils/formatters.js";
 import UpdateLimitsModal from "@/components/UpdateLimitsModal.vue";
+import Toast from "./shared/Toast.vue";
 
 const authStore = useAuthStore();
 const accountStore = useAccountStore();
@@ -15,6 +16,7 @@ const page = ref(0);
 const pageSize = 10;
 const selectedAccount = ref(null);
 const showModal = ref(false);
+const toastRef = ref(null);
 
 function selectAccount(account) {
   selectedAccount.value = account;
@@ -28,29 +30,31 @@ function openModal() {
 
 async function submitLimitUpdate(updatedData) {
   try {
-    console.log("Submitting updated limits:", updatedData);
-
-    await axios.put(API_ENDPOINTS.updateLimits(updatedData.iban), {
-      dailyLimit: updatedData.dailyLimit,
-      absoluteLimit: updatedData.absoluteLimit,
-      withdrawLimit: updatedData.withdrawLimit,
-    },
-    {
+    const response = await axios.put(
+      API_ENDPOINTS.updateLimits(updatedData.iban),
+      {
+        dailyLimit: updatedData.dailyLimit,
+        absoluteLimit: updatedData.absoluteLimit,
+        withdrawLimit: updatedData.withdrawLimit,
+      },
+      {
         headers: {
           Authorization: `Bearer ${authStore.token}`,
         },
       }
-  );
+    );
 
-    showModal.value = false;
+    if (response.status === 200) {
+      showModal.value = false;
+      await fetchAccounts();
+       // Deselect account after successful update
+      selectedAccount.value = null;
+      toastRef.value.setToast("Account Limits Updated Successfully", "success");
+    }
   } catch (error) {
-    console.error("Error updating account limits:", error);
-    // Optionally show an error message to the user
+    toastRef.value.setToast("Failed to update account limits", "error");
   }
 }
-
-
-
 async function fetchAccounts() {
   accountStore.fetchAllAccounts(page.value, pageSize);
 }
@@ -82,16 +86,15 @@ function nextPage() {
     class="container my-5"
   >
     <div class="d-flex justify-content-between align-items-center mb-4">
-  <h1 class="h2 m-0">Customer Accounts</h1>
-  <button
-    class="btn btn-primary"
-    @click="openModal"
-    :disabled="!selectedAccount"
-  >
-    Update Account Limits
-  </button>
-</div>
-
+      <h1 class="h2 m-0">Customer Accounts</h1>
+      <button
+        class="btn btn-primary"
+        @click="openModal"
+        :disabled="!selectedAccount"
+      >
+        Update Account Limits
+      </button>
+    </div>
 
     <div v-if="accountStore.error" class="alert alert-danger text-center">
       {{ accountStore.error }}
@@ -163,10 +166,10 @@ function nextPage() {
   </div>
 
   <UpdateLimitsModal
-  v-if="showModal"
-  :account="selectedAccount"
-  @close="showModal = false"
-  @submit="submitLimitUpdate"
-/>
-
+    v-if="showModal"
+    :account="selectedAccount"
+    @close="showModal = false"
+    @submit="submitLimitUpdate"
+  />
+  <Toast ref="toastRef" />
 </template>

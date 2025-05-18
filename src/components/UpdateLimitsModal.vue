@@ -8,31 +8,31 @@
       role="dialog"
     >
       <div class="modal-dialog modal-dialog-centered">
-        <form @submit.prevent="onSubmit">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Update Account Limits</h5>
-            <button
-              type="button"
-              class="btn-close"
-              @click="$emit('close')"
-              aria-label="Close"
-            ></button>
-          </div>
+          <form @submit.prevent="onSubmit">
+            <div class="modal-header">
+              <h5 class="modal-title">Update Account Limits</h5>
+              <button
+                type="button"
+                class="btn-close"
+                @click="$emit('close')"
+                aria-label="Close"
+              ></button>
+            </div>
             <div class="modal-body">
               <BaseInput
                 name="dailyLimit"
-                label="Enter amount"
+                label="Enter daily limit"
                 type="currency"
               />
               <BaseInput
                 name="absoluteLimit"
-                label="Enter amount"
+                label="Enter absolute limit"
                 type="currency"
               />
               <BaseInput
                 name="withdrawLimit"
-                label="Enter amount"
+                label="Enter withdraw limit"
                 type="currency"
               />
             </div>
@@ -48,8 +48,8 @@
                 Save Changes
               </button>
             </div>
+          </form>
         </div>
-         </form>
       </div>
     </div>
     <div class="modal-backdrop fade show"></div>
@@ -58,32 +58,42 @@
 
 <script setup>
 import { watch } from "vue";
-import BaseInput from "@/components/shared/forms/BaseInput.vue";
-import updateLimitsSchema from "@/schemas/updateLimitsSchema";
 import { useForm } from "vee-validate";
 
+import BaseInput from "@/components/shared/forms/BaseInput.vue";
+
+import updateLimitsSchema from "@/schemas/updateLimitsSchema";
+import { parseEuro, formatEuro } from "@/utils/formatters";
+
+
 const props = defineProps({
-  account: Object,
+  account: {
+    type: Object,
+    required: true,
+  },
 });
 
 const formContext = useForm({
-    validationSchema: updateLimitsSchema
-})
+  validationSchema: updateLimitsSchema,
+});
 
-const { handleSubmit, meta, resetForm } = formContext
+const { handleSubmit, resetForm } = formContext;
 
 const emit = defineEmits(["close", "submit"]);
 
-// Reset form when account changes (to update initial values)
 watch(
   () => props.account,
-   (account) => {
+  (account) => {
     if (account) {
       resetForm({
         values: {
-          dailyLimit: account.dailyLimit || "",
-          absoluteLimit: account.absoluteLimit || "",
-          withdrawLimit: account.withdrawLimit || "",
+          dailyLimit: account.dailyLimit ? formatEuro(account.dailyLimit) : "",
+          absoluteLimit: account.absoluteLimit
+            ? formatEuro(account.absoluteLimit)
+            : "",
+          withdrawLimit: account.withdrawLimit
+            ? formatEuro(account.withdrawLimit)
+            : "",
         },
       });
     }
@@ -94,12 +104,9 @@ watch(
 const onSubmit = handleSubmit(async (values) => {
   emit("submit", {
     iban: props.account.iban,
-    dailyLimit: parseFloat(values.dailyLimit),
-    absoluteLimit: parseFloat(values.absoluteLimit),
-    withdrawLimit: parseFloat(values.withdrawLimit),
+    dailyLimit: parseEuro(values.dailyLimit),
+    absoluteLimit: parseEuro(values.absoluteLimit),
+    withdrawLimit: parseEuro(values.withdrawLimit),
   });
 });
-
-defineExpose({ onSubmit });
-
 </script>
