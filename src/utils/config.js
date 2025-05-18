@@ -9,5 +9,6 @@ export const API_ENDPOINTS = {
   atmTransactions: `${API_BASE_URL}/atm/transactions`,
   accountsById: (id) => `${API_BASE_URL}/users/${id}/accounts`,
   accounts: `${API_BASE_URL}/accounts`,
-  accountTransactionsbyId: (id) => `${API_BASE_URL}/accounts/${id}/transactions`
+  accountTransactionsbyId: (id) => `${API_BASE_URL}/accounts/${id}/transactions`,
+  updateLimits: (iban) => `${API_BASE_URL}/accounts/${iban}/limits`,
 };

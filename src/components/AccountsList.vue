@@ -26,15 +26,29 @@ function openModal() {
   }
 }
 
-function submitLimitUpdate(updatedData) {
-  console.log("Submitting updated limits:", updatedData);
+async function submitLimitUpdate(updatedData) {
+  try {
+    console.log("Submitting updated limits:", updatedData);
 
-  // Here you would normally send the updated data to your backend via axios
-  // axios.put(`${API_ENDPOINTS.updateLimits}`, updatedData)
-  //   .then(() => fetchAccounts());
+    await axios.put(API_ENDPOINTS.updateLimits(updatedData.iban), {
+      dailyLimit: updatedData.dailyLimit,
+      absoluteLimit: updatedData.absoluteLimit,
+      withdrawLimit: updatedData.withdrawLimit,
+    },
+    {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      }
+  );
 
-  showModal.value = false;
+    showModal.value = false;
+  } catch (error) {
+    console.error("Error updating account limits:", error);
+    // Optionally show an error message to the user
+  }
 }
+
 
 
 async function fetchAccounts() {
