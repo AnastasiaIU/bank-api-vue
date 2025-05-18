@@ -1,56 +1,53 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import axios from "axios";
 
 import { useAuthStore } from "@/stores/auth";
-import { API_ENDPOINTS } from "@/utils/config";
+import { useAccountStore } from "@/stores/account.js";
 import { formatEuro } from "../utils/formatters.js";
+import UpdateLimitsModal from "@/components/UpdateLimitsModal.vue";
+import Toast from "./shared/Toast.vue";
 
 const authStore = useAuthStore();
+const accountStore = useAccountStore();
 
-const accounts = ref([]);
-const totalPages = ref(0);
-const totalElements = ref(0);
-const isLastPage = ref(false);
-const isFirstPage = ref(false);
-const error = ref(null);
 const page = ref(0);
 const pageSize = 10;
+const selectedAccount = ref(null);
+const showModal = ref(false);
+const toastRef = ref(null);
 
-async function fetchAccounts() {
-  error.value = null;
+function selectAccount(account) {
+  selectedAccount.value = account;
+}
 
-  try {
-    const response = await axios.get(API_ENDPOINTS.accounts, {
-      params: { page: page.value, size: pageSize },
-      headers: {
-        Authorization: `Bearer ${authStore.token}`,
-      },
-    });
-
-    accounts.value = response.data.content;
-    totalPages.value = response.data.totalPages;
-    totalElements.value = response.data.totalElements;
-    isLastPage.value = response.data.last;
-    isFirstPage.value = response.data.first;
-  } catch (err) {
-    error.value = "Failed to load accounts.";
-    console.error(err);
-    accounts.value = [];
-    totalPages.value = 0;
-    totalElements.value = 0;
-    isLastPage.value = true;
-    isFirstPage.value = true;
+function openModal() {
+  if (selectedAccount.value) {
+    showModal.value = true;
   }
 }
 
-onMounted(() => {
-  fetchAccounts();
-});
+async function submitLimitUpdate(updatedData) {
+  try {
+    const response = await accountStore.updateAccountLimits(updatedData);
 
-watch(page, () => {
-  fetchAccounts();
-});
+    if (response.status === 200) {
+      showModal.value = false;
+      await fetchAccounts();
+      selectedAccount.value = null;
+      toastRef.value.setToast("Account Limits Updated Successfully", "success");
+    } else {
+      toastRef.value.setToast("Failed to update account limits", "error");
+    }
+  } catch (error) {
+    toastRef.value.setToast("Failed to update account limits", "error");
+  }
+}
+
+async function fetchAccounts() {
+  accountStore.fetchAllAccounts(page.value, pageSize);
+}
+
+watch(page, fetchAccounts, { immediate: true });
 
 function previousPage() {
   if (page.value > 0) {
@@ -59,7 +56,7 @@ function previousPage() {
 }
 
 function nextPage() {
-  if (!isLastPage.value) {
+  if (!accountStore.isLastPage.value) {
     page.value++;
   }
 }
@@ -70,15 +67,26 @@ function nextPage() {
     v-if="authStore.isAuthenticated && authStore.isEmployee"
     class="container my-5"
   >
-    <h1 class="h2 text-center mb-4">Customer Accounts</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h2 m-0">Customer Accounts</h1>
+      <button
+        class="btn btn-primary"
+        @click="openModal"
+        :disabled="!selectedAccount"
+      >
+        Update Account Limits
+      </button>
+    </div>
 
-    <div v-if="error" class="alert alert-danger text-center">{{ error }}</div>
+    <div v-if="accountStore.error" class="alert alert-danger text-center">
+      {{ accountStore.error }}
+    </div>
 
     <table
       v-else
-      class="table table-striped table-bordered text-center align-middle"
+      class="table table-light table-bordered table-hover text-center align-middle"
     >
-      <thead class="table-primary">
+      <thead class="table-success">
         <tr>
           <th>Customer Name</th>
           <th>IBAN</th>
@@ -87,8 +95,16 @@ function nextPage() {
         </tr>
       </thead>
       <tbody>
-        <template v-if="accounts.length > 0">
-          <tr v-for="(account, index) in accounts" :key="index">
+        <template v-if="accountStore.userAccounts.length > 0">
+          <tr
+            v-for="(account, index) in accountStore.userAccounts"
+            :key="index"
+            :class="[
+              'clickable-row',
+              { 'table-active': selectedAccount?.iban === account.iban },
+            ]"
+            @click="selectAccount(account)"
+          >
             <td>{{ account.firstName }} {{ account.lastName }}</td>
             <td>{{ account.iban }}</td>
             <td>{{ account.type }}</td>
@@ -110,7 +126,7 @@ function nextPage() {
       <button
         class="btn btn-outline-primary"
         @click="previousPage"
-        :disabled="isFirstPage"
+        :disabled="accountStore.isFirstPage"
         title="Previous Page"
       >
         <i class="bi bi-chevron-left"></i>
@@ -118,13 +134,13 @@ function nextPage() {
       </button>
 
       <span class="text-muted fw-semibold">
-        Page {{ page + 1 }} of {{ totalPages }}
+        Page {{ page + 1 }} of {{ accountStore.totalPages }}
       </span>
 
       <button
         class="btn btn-outline-primary"
         @click="nextPage"
-        :disabled="isLastPage"
+        :disabled="accountStore.isLastPage"
         title="Next Page"
       >
         Next
@@ -132,4 +148,18 @@ function nextPage() {
       </button>
     </nav>
   </div>
+
+  <UpdateLimitsModal
+    v-if="showModal"
+    :account="selectedAccount"
+    @close="showModal = false"
+    @submit="submitLimitUpdate"
+  />
+  <Toast ref="toastRef" />
 </template>
+
+<style scoped>
+.clickable-row {
+  cursor: pointer;
+}
+</style>

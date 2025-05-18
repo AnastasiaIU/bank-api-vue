@@ -61,17 +61,17 @@ function closeOffcanvas() {
           <ul class="dropdown-menu" aria-labelledby="bankDropdown">
             <li><router-link class="dropdown-item" to="/">Home</router-link></li>
             <li
-              v-if="!authStore.isEmployee && authStore.user.isApproved"
+              v-if="!authStore.isEmployee && authStore.user?.isApproved"
             >
               <router-link class="dropdown-item" to="/transfer">Transfer</router-link>
             </li>
             <li
-              v-if="!authStore.isEmployee && authStore.user.isApproved"
+              v-if="!authStore.isEmployee && authStore.user?.isApproved"
             >
               <router-link class="dropdown-item" to="/transactions">Transactions</router-link>
             </li>
             <li
-              v-if="!authStore.isEmployee && authStore.user.isApproved"
+              v-if="!authStore.isEmployee && authStore.user?.isApproved"
             >
               <router-link class="dropdown-item" to="/lookup">IBAN Lookup</router-link>
             </li>
@@ -85,7 +85,7 @@ function closeOffcanvas() {
         </div>
 
         <!-- ATM Dropdown -->
-        <div v-if="!authStore.isEmployee && authStore.user.isApproved" class="dropdown d-none d-lg-block">
+        <div v-if="!authStore.isEmployee && authStore.user?.isApproved" class="dropdown d-none d-lg-block">
           <button
             class="btn btn-outline-primary dropdown-toggle"
             type="button"
@@ -204,13 +204,13 @@ function closeOffcanvas() {
                     <router-link to="/" @click="closeOffcanvas">Home</router-link>
                   </li>
                   <li
-                    v-if="!authStore.isEmployee && authStore.user.isApproved"
+                    v-if="!authStore.isEmployee && authStore.user?.isApproved"
                     class="list-group-item"
                   >
                     <router-link to="/transfer" @click="closeOffcanvas">Transfer</router-link>
                   </li>
                   <li
-                    v-if="!authStore.isEmployee && authStore.user.isApproved"
+                    v-if="!authStore.isEmployee && authStore.user?.isApproved"
                     class="list-group-item"
                   >
                     <router-link to="/transactions" @click="closeOffcanvas">Transactions</router-link>
@@ -227,7 +227,7 @@ function closeOffcanvas() {
           </div>
 
           <!-- ATM -->
-          <div v-if="!authStore.isEmployee && authStore.user.isApproved" class="accordion-item">
+          <div v-if="!authStore.isEmployee && authStore.user?.isApproved" class="accordion-item">
             <h2 class="accordion-header" id="headingATM">
               <button
                 class="accordion-button collapsed"
