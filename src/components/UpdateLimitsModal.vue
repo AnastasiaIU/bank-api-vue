@@ -83,7 +83,7 @@ const emit = defineEmits(["close", "submit"]);
 
 watch(
   () => props.account,
-  (account) => {
+   (account) => {
     if (account) {
       resetForm({
         values: {
