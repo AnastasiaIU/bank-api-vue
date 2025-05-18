@@ -1,10 +1,8 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import axios from "axios";
 
 import { useAuthStore } from "@/stores/auth";
 import { useAccountStore } from "@/stores/account.js";
-import { API_ENDPOINTS } from "@/utils/config";
 import { formatEuro } from "../utils/formatters.js";
 import UpdateLimitsModal from "@/components/UpdateLimitsModal.vue";
 import Toast from "./shared/Toast.vue";
@@ -30,42 +28,26 @@ function openModal() {
 
 async function submitLimitUpdate(updatedData) {
   try {
-    const response = await axios.put(
-      API_ENDPOINTS.updateLimits(updatedData.iban),
-      {
-        dailyLimit: updatedData.dailyLimit,
-        absoluteLimit: updatedData.absoluteLimit,
-        withdrawLimit: updatedData.withdrawLimit,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${authStore.token}`,
-        },
-      }
-    );
+    const response = await accountStore.updateAccountLimits(updatedData);
 
     if (response.status === 200) {
       showModal.value = false;
       await fetchAccounts();
-       // Deselect account after successful update
       selectedAccount.value = null;
       toastRef.value.setToast("Account Limits Updated Successfully", "success");
+    } else {
+      toastRef.value.setToast("Failed to update account limits", "error");
     }
   } catch (error) {
     toastRef.value.setToast("Failed to update account limits", "error");
   }
 }
+
 async function fetchAccounts() {
   accountStore.fetchAllAccounts(page.value, pageSize);
 }
 
-onMounted(() => {
-  fetchAccounts();
-});
-
-watch(page, () => {
-  fetchAccounts();
-});
+watch(page, fetchAccounts, { immediate: true });
 
 function previousPage() {
   if (page.value > 0) {
@@ -102,9 +84,9 @@ function nextPage() {
 
     <table
       v-else
-      class="table table-striped table-bordered text-center align-middle"
+      class="table table-light table-bordered table-hover text-center align-middle"
     >
-      <thead class="table-primary">
+      <thead class="table-success">
         <tr>
           <th>Customer Name</th>
           <th>IBAN</th>
@@ -117,9 +99,11 @@ function nextPage() {
           <tr
             v-for="(account, index) in accountStore.userAccounts"
             :key="index"
-            :class="{ 'table-active': selectedAccount?.iban === account.iban }"
+            :class="[
+              'clickable-row',
+              { 'table-active': selectedAccount?.iban === account.iban },
+            ]"
             @click="selectAccount(account)"
-            style="cursor: pointer"
           >
             <td>{{ account.firstName }} {{ account.lastName }}</td>
             <td>{{ account.iban }}</td>
@@ -173,3 +157,9 @@ function nextPage() {
   />
   <Toast ref="toastRef" />
 </template>
+
+<style scoped>
+.clickable-row {
+  cursor: pointer;
+}
+</style>
