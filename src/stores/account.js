@@ -1,10 +1,10 @@
-import { ref } from "vue";
-import { defineStore } from "pinia";
+import { ref } from 'vue'
+import { defineStore } from 'pinia'
 
-import axios from "@/utils/axios";
+import axios from '@/utils/axios'
 
-import { API_ENDPOINTS } from "@/utils/config";
-import { useAuthStore } from "@/stores/auth";
+import { API_ENDPOINTS } from '@/utils/config'
+import { useAuthStore } from '@/stores/auth'
 
 export const useAccountStore = defineStore(
   "pinia-account",
@@ -59,8 +59,8 @@ export const useAccountStore = defineStore(
     }
 
     async function fetchUserAccounts(userId) {
-      const response = await axios.get(API_ENDPOINTS.accountsById(userId));
-      userAccounts.value = response.data;
+      const response = await axios.get(API_ENDPOINTS.accountsById(userId))
+      userAccounts.value = response.data
     }
 
     return {
