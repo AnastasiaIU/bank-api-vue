@@ -65,8 +65,13 @@ const router = createRouter({
     {
       path: '/users/review',
       name: ROUTE_NAMES.CUSTOMER_REVIEW,
-      component: () => import('../views/CustomerApprovalsView.vue'),
+      component: () => import('../views/CustomerReviewView.vue'),
       meta: { guards: ['auth', 'employee'] }
+    },
+    {
+      path: '/users/approval/:id',
+      name: ROUTE_NAMES.CUSTOMER_APPROVAL,
+      component: () => import('../views/CustomerApprovalView.vue'),
     },
     {
       path: '/lookup',
