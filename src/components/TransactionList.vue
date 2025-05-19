@@ -11,9 +11,8 @@ const selectedAccount = ref(null)
 const transactions = ref([])
 
 const filters = ref({
-  onDate: '',
-  before: '',
-  after: '',
+  startDate: '',
+  endDate: '',
   amount: '',
   comparison: '',
   sourceIban: '',

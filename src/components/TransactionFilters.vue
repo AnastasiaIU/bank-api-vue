@@ -44,34 +44,25 @@ function onInputChange(key, value) {
 
     <!-- Date -->
     <div class="row mb-3">
-      <div class="col-md-4">
-        <label class="form-label">On Date</label>
-        <input
-          type="date"
-          class="form-control"
-          :value="filters.onDate"
-          @input="onInputChange('onDate', $event.target.value)"
-        />
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">After</label>
-        <input
-          type="datetime-local"
-          class="form-control"
-          :value="filters.after"
-          @input="onInputChange('after', $event.target.value)"
-        />
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Before</label>
-        <input
-          type="datetime-local"
-          class="form-control"
-          :value="filters.before"
-          @input="onInputChange('before', $event.target.value)"
-        />
-      </div>
-    </div>
+  <div class="col-md-6">
+    <label class="form-label">Start Date</label>
+    <input
+      type="date"
+      class="form-control"
+      :value="filters.startDate"
+      @input="onInputChange('startDate', $event.target.value)"
+    />
+  </div>
+  <div class="col-md-6">
+    <label class="form-label">End Date</label>
+    <input
+      type="date"
+      class="form-control"
+      :value="filters.endDate"
+      @input="onInputChange('endDate', $event.target.value)"
+    />
+  </div>
+</div>
 
     <hr />
 
