@@ -8,7 +8,7 @@ const props = defineProps({
         required: true
     },
     selectedAccount: {
-        type: [String]
+        type: [Object, String, null]
     },
     label: {
         type: String,
@@ -18,16 +18,24 @@ const props = defineProps({
 
 const emit = defineEmits(['update:selectedAccount']);
 
-const localSelectedAccount = ref(props.selectedAccount);
+const localSelectedIban = ref(
+    props.selectedAccount && typeof props.selectedAccount === 'object'
+        ? props.selectedAccount.iban
+        : props.selectedAccount || ''
+);
 
-watch(localSelectedAccount, (newValue) => {
-    emit('update:selectedAccount', newValue);
+watch(localSelectedIban, (newIban) => {
+    const selected = props.accounts.find(acc => acc.iban === newIban) || null;
+    emit('update:selectedAccount', selected);
 });
 
 watch(
     () => props.selectedAccount,
     (newValue) => {
-        localSelectedAccount.value = newValue;
+        localSelectedIban.value =
+            newValue && typeof newValue === 'object'
+                ? newValue.iban
+                : newValue || '';
     }
 );
 </script>
@@ -35,7 +43,7 @@ watch(
 <template>
     <div>
         <label :for="label" class="form-label">{{ label }}</label>
-        <select :id="label" v-model="localSelectedAccount" class="form-select">
+        <select :id="label" v-model="localSelectedIban" class="form-select">
             <option disabled value="">Select an account</option>
             <option v-for="account in accounts" :key="account.iban" :value="account.iban">
                 {{ account.iban }} ({{ formatEuro(account.balance) }})
