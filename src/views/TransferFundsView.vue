@@ -1,32 +1,10 @@
 <script setup>
 import TransferFundsEmp from '@/components/TransferFundsEmp.vue';
 import TransferFundsCus from '@/components/TransferFundsCus.vue';
-import axios from '@/utils/axios';
-import { ref, onMounted } from 'vue';
-import { API_ENDPOINTS } from '@/utils/config';
 import { useAuthStore } from "@/stores/auth";
 
 const authStore = useAuthStore();
-const userRole = ref(null);
-
-async function fetchUserRole() {
-    try {
-        const response = await axios.get(API_ENDPOINTS.me, {
-            headers: {
-                Authorization: `Bearer ${authStore.token}`
-            }
-        });
-
-        userRole.value = response.data.role;
-    } catch (error) {
-        console.error('Error fetching user role:', error);
-        userRole.value = null;
-    }
-}
-
-onMounted(async () => {
-    await fetchUserRole();
-});
+const userRole = authStore.user.role;
 </script>
 
 <template>
