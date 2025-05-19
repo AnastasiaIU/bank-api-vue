@@ -1,66 +1,51 @@
 <script setup>
-import { ref } from 'vue'
-import IbanInput from './shared/forms/IbanInput.vue';
-import AmountInput from './shared/forms/AmountInput.vue';
-import TextInput from './shared/forms/TextInput.vue';
 import Toast from './shared/Toast.vue';
 import { API_ENDPOINTS } from "@/utils/config";
 import axios from '@/utils/axios';
+import BaseInput from '@/components/shared/forms/BaseInput.vue';
+import { useForm } from 'vee-validate';
+import { parseEuro } from '@/utils/formatters';
+import transferEmployeeSchema from '@/schemas/transferEmployeeSchema';
+import { ref } from 'vue';
 
-const fromAccountIban = ref('');
-const isFromIbanValid = ref(false);
-const toAccountIban = ref('');
-const isToIbanValid = ref(false);
-const amount = ref('');
-const isValidAmount = ref(false);
-const description = ref('');
 const toastRef = ref(null);
 
-function disableButton() {
-    return !(isFromIbanValid.value && isToIbanValid.value && isValidAmount.value);
-}
+const { handleSubmit, meta, resetForm } = useForm({
+    validationSchema: transferEmployeeSchema,
+    validateOnMount: true
+});
 
-async function transferFunds() {
+const onSubmit = handleSubmit(async (values) => {
     try {
         const transaction = {
-            sourceAccount: fromAccountIban.value,
-            targetAccount: toAccountIban.value,
-            amount: parseFloat(amount.value),
-            description: description.value || null,
+            sourceAccount: values.fromAccountIban,
+            targetAccount: values.toAccountIban,
+            amount: parseEuro(values.amount),
+            description: values.description || null,
         };
-
         const response = await axios.post(API_ENDPOINTS.transactions, transaction);
-
         if (response.status === 201) {
             toastRef.value.setToast('Transaction created successfully!', 'success');
-
-            fromAccountIban.value = '';
-            isFromIbanValid.value = false;
-            toAccountIban.value = '';
-            isToIbanValid.value = false;
-            amount.value = '';
-            isValidAmount.value = false;
-            description.value = null;
+            resetForm();
         } else {
             toastRef.value.setToast('Failed to create transaction. Please try again.', 'error');
         }
     } catch (error) {
         toastRef.value.setToast('An error occurred while creating the transaction.', 'error');
     }
-}
+});
 </script>
 
 <template>
     <section class="card col-md-6 col-lg-5 col-xl-4 p-4 m-4">
         <h1 class="text-center">Transfer Funds</h1>
-        <div>
-            <IbanInput id="fromIban" label="From IBAN" v-model="fromAccountIban" v-model:isValid="isFromIbanValid" />
-            <IbanInput id="toIban" label="To IBAN" v-model="toAccountIban" v-model:isValid="isToIbanValid" />
-            <AmountInput id="transferAmount" label="Amount to Transfer" v-model="amount"
-                v-model:isValid="isValidAmount" />
-            <TextInput id="description" label="Description" v-model="description" />
-            <button class="btn btn-primary" @click="transferFunds" :disabled="disableButton()">Transfer</button>
-        </div>
+        <form @submit.prevent="onSubmit" class="d-flex flex-column gap-2">
+            <BaseInput name="fromAccountIban" label="From IBAN" />
+            <BaseInput name="toAccountIban" label="To IBAN" />
+            <BaseInput name="amount" label="Amount to Transfer" type="currency" />
+            <BaseInput name="description" label="Description" />
+            <button class="btn btn-primary" type="submit" :disabled="!meta.valid">Transfer</button>
+        </form>
         <Toast ref="toastRef" />
     </section>
 </template>
