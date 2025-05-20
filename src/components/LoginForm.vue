@@ -8,14 +8,12 @@ import { useRouter } from "vue-router";
 import { useForm } from "vee-validate";
 
 import { useAuthStore } from "@/stores/auth";
-import { useAuthFeedbackStore } from "@/stores/authFeedback";
 import BaseInput from "@/components/shared/forms/BaseInput.vue";
 import BasePasswordInput from "@/components/shared/forms/BasePasswordInput.vue";
 import loginSchema from "@/schemas/loginSchema";
 
 const router = useRouter();
 const authStore = useAuthStore();
-const authFeedbackStore = useAuthFeedbackStore();
 const isLoading = ref(false);
 const toastRef = ref(null);
 const generalError = ref("");
@@ -27,9 +25,9 @@ const formContext = useForm({
 const { handleSubmit } = formContext;
 
 onMounted(() => {
-  if (authFeedbackStore.wasRegistered) {
+  if (authStore.wasRegistered) {
     toastRef.value.displayToast();
-    authFeedbackStore.setWasRegistered(false);
+    authStore.setWasRegistered(false);
   }
 });
 
@@ -80,36 +78,21 @@ const onSubmit = handleSubmit(async (values) => {
       </div>
 
       <div class="form-group">
-        <BaseInput
-          name="email"
-          label="Email address"
-          type="email"
-          placeholder="Enter email"
-        />
+        <BaseInput name="email" label="Email address" type="email" placeholder="Enter email" />
       </div>
 
       <div class="form-group mb-2">
-        <BasePasswordInput
-          name="password"
-          label="Password"
-          placeholder="Enter password"
-        />
+        <BasePasswordInput name="password" label="Password" placeholder="Enter password" />
       </div>
 
       <button type="submit" class="btn btn-primary mb-3">Log in</button>
 
       <p>
         Don't have an account?
-        <router-link to="/register" class="link-opacity-75-hover"
-          >Sign up</router-link
-        >.
+        <router-link to="/register" class="link-opacity-75-hover">Sign up</router-link>.
       </p>
     </form>
 
-    <Toast
-      ref="toastRef"
-      text="Registration successful! You can log in now."
-      variant="success"
-    />
+    <Toast ref="toastRef" text="Registration successful! You can log in now." variant="success" />
   </section>
 </template>

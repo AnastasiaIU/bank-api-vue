@@ -32,14 +32,27 @@ export const bsnRule = yup
   .required('BSN is required')
   .matches(/^\d{9}$/, 'BSN must be exactly 9 digits')
 
-export const amountRule = yup
+export const amountAboveZeroRule = yup
   .string()
   .required('Amount is required')
-  .test('is-positive', 'Amount must be greater than 0', (value) => {
+  .test('is-above-zero', 'Amount must be greater than 0', (value) => {
     if (!value) return false
 
     // Remove non-numeric characters except dot and comma
-    const clean = value.replace(/[^0-9.,]/g, '').replace(',', '.')
+    const clean = value.replace(/[^0-9,.\-]/g, '').replace(',', '.')
+    const num = parseFloat(clean)
+
+    return !isNaN(num) && num > 0
+  })
+
+export const amountNotZeroRule = yup
+  .string()
+  .required('Amount is required')
+  .test('not-zero', 'Amount cannot be zero', (value) => {
+    if (!value) return false
+
+    // Remove non-numeric characters except dot and comma
+    const clean = value.replace(/[^0-9,.]/g, '').replace(',', '.')
     const num = parseFloat(clean)
 
     return !isNaN(num) && num > 0
