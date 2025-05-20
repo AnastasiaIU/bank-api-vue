@@ -5,8 +5,20 @@ import axios from '@/utils/axios'
 
 import { API_ENDPOINTS } from '@/utils/config'
 
-export const useAtmTransactionStore = defineStore('pinia-atm-transaction', () => {
+import { useAuthStore } from "@/stores/auth"
+import { useAccountStore } from "@/stores/account"
+import { enforceMinimumDelay } from '@/utils/timers'
+
+export const useAtmTransactionStore = defineStore('atm-transaction', () => {
+    const POLL_INTERVAL = 4000;
+    const POLL_TIMEOUT = 10000;
+
     const transactions = ref([])
+    const isLoading = ref(false);
+    const error = ref(null);
+
+    const authStore = useAuthStore()
+    const accountStore = useAccountStore()
 
     async function create(transactionData) {
         const response = await axios.post(API_ENDPOINTS.atmTransactions, transactionData)
@@ -19,5 +31,50 @@ export const useAtmTransactionStore = defineStore('pinia-atm-transaction', () =>
         return response.data
     }
 
-    return { create, getById }
-}, { persist: { storage: sessionStorage } })
+    async function pollStatus(id) {
+        const startTime = Date.now();
+
+        while (Date.now() - startTime < POLL_TIMEOUT) {
+            const transaction = await getById(id);
+            if (transaction.status !== 'PENDING') {
+                return transaction;
+            }
+            await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
+        }
+
+        throw new Error('Transaction status check timed out.');
+    };
+
+    async function processTransaction(transactionData) {
+        clearUiState()
+
+        const start = Date.now();
+        isLoading.value = true;
+
+        try {
+            const createdTransaction = await create(transactionData)
+            const finalTransaction = await pollStatus(createdTransaction.data.id)
+
+            if (finalTransaction.status === 'SUCCEEDED') {
+                await accountStore.fetchUserAccounts(authStore.user.id)
+                return { message: "Transaction succeeded. Money dispensed.", type: "success" }
+            } else {
+                return { message: finalTransaction.failureReason || "Transaction failed.", type: "error" }
+            }
+
+        } catch (err) {
+            error.value = err?.response?.data?.message || err?.message || 'An error occurred. Please try again.'
+
+        } finally {
+            await enforceMinimumDelay(start);
+            isLoading.value = false;
+        }
+    }
+
+    function clearUiState() {
+        error.value = null
+        isLoading.value = false
+    }
+
+    return { processTransaction, isLoading, error, clearUiState }
+})
