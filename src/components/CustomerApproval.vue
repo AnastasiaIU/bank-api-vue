@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import {API_ENDPOINTS} from "@/utils/config.js";
+import LimitDropdown from '@/components/shared/forms/LimitDropdown.vue'
 
 // Setup router and route
 const router = useRouter()
@@ -45,20 +46,10 @@ const fetchAccounts = async () => {
 }
 
 const sendApproval = async (status) => {
-  const formattedAccounts = accounts.value.map(account => ({
-    iban: account.iban,
-    type: account.type,
-    balance: 0,
-    dailyLimit: account.dailyLimit ?? 0,
-    withdrawLimit: account.withdrawLimit ?? 0,
-    absoluteLimit: account.absoluteLimit ?? 0,
-    userId: parseInt(userId)
-  }))
-
   try {
     await axios.put(API_ENDPOINTS.usersApproval(userId), {
       approvalStatus: status,
-      accounts: formattedAccounts
+      accounts: accounts.value
     }, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -72,7 +63,7 @@ const sendApproval = async (status) => {
 }
 
 onMounted(async () => {
-  await Promise.all([fetchUser(), fetchAccounts()])
+  await Promise.all([ fetchAccounts(), fetchUser()])
 })
 </script>
 
@@ -111,30 +102,13 @@ onMounted(async () => {
                 <td>{{ account.iban }}</td>
                 <td>{{ account.type }}</td>
                 <td>
-                  <select v-model.number="account.dailyLimit" class="form-select form-select-sm">
-                    <option :value="0">0</option>
-                    <option :value="1000">1,000</option>
-                    <option :value="2000">2,000</option>
-                    <option :value="3000">3,000</option>
-                    <option :value="5000">5,000</option>
-                  </select>
+                  <LimitDropdown v-model="account.dailyLimit" :options="[0, 1000, 2000, 3000, 5000]" />
                 </td>
                 <td>
-                  <select v-model.number="account.withdrawLimit" class="form-select form-select-sm">
-                    <option :value="0">0</option>
-                    <option :value="500">500</option>
-                    <option :value="1000">1,000</option>
-                    <option :value="2000">2,000</option>
-                    <option :value="3000">3,000</option>
-                  </select>
+                  <LimitDropdown v-model="account.withdrawLimit" :options="[0, 500, 1000, 2000, 3000]" />
                 </td>
                 <td>
-                  <select v-model.number="account.absoluteLimit" class="form-select form-select-sm">
-                    <option :value="0">0</option>
-                    <option :value="-100">-100</option>
-                    <option :value="-200">-200</option>
-                    <option :value="-300">-300</option>
-                  </select>
+                  <LimitDropdown v-model="account.dailyLimit" :options="[0, -100, -200, -300, -500]" />
                 </td>
               </tr>
               </tbody>
