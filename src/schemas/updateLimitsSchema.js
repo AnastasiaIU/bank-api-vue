@@ -1,8 +1,8 @@
 import * as yup from 'yup'
-import { amountRule } from './rules'
+import { amountAboveZeroRule, amountNotZeroRule } from './rules'
 
 export default yup.object({
-  dailyLimit: amountRule,
-  absoluteLimit: amountRule,
-  withdrawLimit: amountRule
+  dailyLimit: amountAboveZeroRule,
+  absoluteLimit: amountNotZeroRule,
+  withdrawLimit: amountAboveZeroRule
 })
