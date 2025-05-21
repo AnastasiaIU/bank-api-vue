@@ -12,7 +12,9 @@ export const API_ENDPOINTS = {
   accounts: `${API_BASE_URL}/accounts`,
   accountTransactionsbyId: (id) => `${API_BASE_URL}/accounts/${id}/transactions`,
   usersPending: `${API_BASE_URL}/users/pending`,
-  // usersApproval: (id) => `${API_BASE_URL}/users/${id}/approval`,
+  usersApproval: (id) => `${API_BASE_URL}/users/${id}/approval`,
+  usersById: (id) => `${API_BASE_URL}/users/${id}`,
+  accountsByIdReview: (id) => `${API_BASE_URL}/users/${id}/accounts/review`,
   updateLimits: (iban) => `${API_BASE_URL}/accounts/${iban}/limits`,
   accountsByName: (firstName, lastName) => `${API_BASE_URL}/users/accounts/${firstName}/${lastName}`,
   accountTransactionsbyId: (id) => `${API_BASE_URL}/accounts/${id}/transactions`
