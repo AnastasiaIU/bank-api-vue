@@ -1,30 +1,46 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
-import axios from "axios"
+import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
+import {API_ENDPOINTS} from "@/utils/config.js";
 
+// Setup router and route
+const router = useRouter()
 const route = useRoute()
 const userId = route.params.id
 
+// Auth and token
 const authStore = useAuthStore()
 const token = authStore.token
 
+// Reactive state
+const user = ref({})
 const accounts = ref([])
-const user = ref({}) // If needed, fetch user info here
+
+const fetchUser = async () => {
+  try {
+    const res = await axios.get(API_ENDPOINTS.usersById(userId), {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    user.value = res.data
+  } catch (error) {
+    console.error('Error fetching user:', error)
+  }
+}
 
 const fetchAccounts = async () => {
-  const res = await axios.get(`http://localhost:8080/users/${userId}/accounts/review`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-  accounts.value = res.data
-  if (res.data.length > 0) {
-    user.value = {
-      firstName: "John",
-      lastName: "Doe"
-    }
+  try {
+    const res = await axios.get(API_ENDPOINTS.accountsByIdReview(userId), {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    accounts.value = res.data
+  } catch (error) {
+    console.error('Error fetching accounts:', error)
   }
 }
 
@@ -32,29 +48,31 @@ const sendApproval = async (status) => {
   const formattedAccounts = accounts.value.map(account => ({
     iban: account.iban,
     type: account.type,
-    balance: 0, // default to 0
-    dailyLimit: account.dailyLimit,
-    withdrawLimit: account.withdrawLimit,
-    absoluteLimit: account.absoluteLimit,
+    balance: 0,
+    dailyLimit: account.dailyLimit ?? 0,
+    withdrawLimit: account.withdrawLimit ?? 0,
+    absoluteLimit: account.absoluteLimit ?? 0,
     userId: parseInt(userId)
-  }));
+  }))
 
-  await axios.put(
-      `http://localhost:8080/users/${userId}/approval`,
-      {
-        approvalStatus: status,
-        accounts: formattedAccounts
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+  try {
+    await axios.put(API_ENDPOINTS.usersApproval(userId), {
+      approvalStatus: status,
+      accounts: formattedAccounts
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-  );
-};
+    })
 
-onMounted(() => {
-  fetchAccounts()
+    await router.push('/users/review')
+  } catch (error) {
+    console.error('Error during approval:', error)
+  }
+}
+
+onMounted(async () => {
+  await Promise.all([fetchUser(), fetchAccounts()])
 })
 </script>
 
@@ -63,9 +81,7 @@ onMounted(() => {
     <div class="card shadow-sm p-4 border-top border-primary" style="border-top-width: 5px;">
       <h2 class="mb-4">User Account Review</h2>
 
-      <!-- Row: Left = User Info | Right = Accounts Table -->
       <div class="row">
-        <!-- User Info -->
         <div class="col-md-4 mb-4">
           <h5 class="mb-4">User Information</h5>
           <p><strong>Name:</strong> {{ user.firstName }} {{ user.lastName }}</p>
@@ -73,7 +89,6 @@ onMounted(() => {
           <p><strong>Phone:</strong> {{ user.phoneNumber }}</p>
         </div>
 
-        <!-- Accounts Table -->
         <div class="col-md-8">
           <h5 class="mb-3">Account Configuration</h5>
           <div class="table-responsive">
