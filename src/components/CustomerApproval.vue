@@ -6,16 +6,15 @@ import { useAuthStore } from '@/stores/auth'
 import {API_ENDPOINTS} from "@/utils/config.js";
 import LimitDropdown from '@/components/shared/forms/LimitDropdown.vue'
 
-// Setup router and route
+
 const router = useRouter()
 const route = useRoute()
 const userId = route.params.id
 
-// Auth and token
+
 const authStore = useAuthStore()
 const token = authStore.token
 
-// Reactive state
 const user = ref({})
 const accounts = ref([])
 
@@ -108,7 +107,7 @@ onMounted(async () => {
                   <LimitDropdown v-model="account.withdrawLimit" :options="[0, 500, 1000, 2000, 3000]" />
                 </td>
                 <td>
-                  <LimitDropdown v-model="account.dailyLimit" :options="[0, -100, -200, -300, -500]" />
+                  <LimitDropdown v-model="account.absoluteLimit" :options="[0, -100, -200, -300, -500]" />
                 </td>
               </tr>
               </tbody>
