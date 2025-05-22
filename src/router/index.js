@@ -63,6 +63,17 @@ const router = createRouter({
       props: { transactionType: 'Withdraw' }
     },
     {
+      path: '/users/review',
+      name: ROUTE_NAMES.CUSTOMER_REVIEW,
+      component: () => import('../views/CustomerReviewView.vue'),
+      meta: { guards: ['auth', 'employee'] }
+    },
+    {
+      path: '/users/approval/:id',
+      name: ROUTE_NAMES.CUSTOMER_APPROVAL,
+      component: () => import('../views/CustomerApprovalView.vue'),
+    },
+    {
       path: '/lookup',
       name: ROUTE_NAMES.LOOKUP,
       component: () => import('../views/LookupView.vue'),
