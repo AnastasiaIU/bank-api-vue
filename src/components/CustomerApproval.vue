@@ -47,13 +47,16 @@ const fetchAccounts = async () => {
 const sendApproval = async (status) => {
   try {
     await axios.put(API_ENDPOINTS.usersApproval(userId), {
-      approvalStatus: status,
-      accounts: accounts.value
+      approvalStatus: status
     }, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}` }
     })
+
+    if (status === 'APPROVED') {
+      await axios.post(API_ENDPOINTS.userAccounts(userId), accounts.value, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+    }
 
     await router.push('/users/review')
   } catch (error) {
