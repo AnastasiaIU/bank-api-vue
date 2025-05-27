@@ -1,11 +1,26 @@
 <script setup>
+import { ref, reactive, watch } from 'vue'
+
 const props = defineProps({
   filters: Object
 })
 const emit = defineEmits(['update:filters', 'submit', 'clear'])
 
+const localFilters = ref({ ...props.filters })
+
 function onInputChange(key, value) {
-  emit('update:filters', { ...props.filters, [key]: value })
+  localFilters.value[key] = value
+}
+
+function apply() {
+  emit('update:filters', { ...localFilters.value })
+  emit('submit')
+}
+
+function clearAll() {
+  Object.keys(localFilters.value).forEach(k => localFilters.value[k] = '')
+  emit('update:filters', {})
+  emit('clear')
 }
 </script>
 
@@ -91,8 +106,8 @@ function onInputChange(key, value) {
 
     <!-- Buttons -->
     <div class="text-center">
-        <button type="submit" class="btn btn-primary me-2" @click="emit('submit')">Apply Filters</button>
-        <button type="button" class="btn btn-secondary" @click="emit('clear')">Clear Filters</button>
+        <button type="submit" class="btn btn-primary me-2" @click="apply">Apply Filters</button>
+        <button type="button" class="btn btn-secondary" @click="clearAll">Clear Filters</button>
     </div>
   </div>
 </template>

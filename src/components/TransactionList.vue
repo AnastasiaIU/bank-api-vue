@@ -1,30 +1,60 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axios from '@/utils/axios'
 import { useAuthStore } from '@/stores/auth'
 import { API_ENDPOINTS } from '@/utils/config'
 import TransactionFilters from './TransactionFilters.vue'
 
 const authStore = useAuthStore()
+const route = useRoute()
+const router = useRouter()
+
 const accounts = ref([])
 const selectedAccount = ref(null)
 const transactions = ref([])
 
+// Read filters from route query
 const filters = ref({
-  startDate: '',
-  endDate: '',
-  amount: '',
-  comparison: '',
-  sourceIban: '',
-  targetIban: ''
+  startDate: route.query.startDate || '',
+  endDate: route.query.endDate || '',
+  amount: route.query.amount || '',
+  comparison: route.query.comparison || '',
+  sourceIban: route.query.sourceIban || '',
+  targetIban: route.query.targetIban || ''
 })
+
+const showFilters = ref(false)
+
+function toggleFilters() {
+  showFilters.value = !showFilters.value
+}
 
 function clearFilters() {
   Object.keys(filters.value).forEach(k => (filters.value[k] = ''))
+  updateUrlFilters()
 }
 
-onMounted(async () => {
-    await fetchAccounts()
+function updateFilters(newFilters) {
+  filters.value = newFilters
+  updateUrlFilters()
+}
+
+function updateUrlFilters() {
+  const cleanedFilters = Object.fromEntries(
+    Object.entries(filters.value).filter(([_, value]) => value !== '' && value != null)
+  )
+
+  router.push({
+    query: cleanedFilters
+  })
+}
+
+onMounted(fetchAccounts)
+
+watch(() => route.query, (newQuery) => {
+  Object.assign(filters.value, newQuery)
+  fetchTransactions()
 })
 
 async function fetchAccounts() {
@@ -32,9 +62,8 @@ async function fetchAccounts() {
     const response = await axios.get(API_ENDPOINTS.accountsById(authStore.user.id))
     accounts.value = response.data
 
-     if (accounts.value.length > 0) {
+    if (accounts.value.length > 0) {
       selectedAccount.value = accounts.value[0]
-
       await fetchTransactions()
     }
   } catch (error) {
@@ -64,15 +93,6 @@ async function fetchTransactions() {
 function switchAccount(type) {
   selectedAccount.value = accounts.value.find(acc => acc.type === type)
   fetchTransactions()
-}
-
-function updateFilters(newFilters) {
-  filters.value = newFilters
-}
-
-const showFilters = ref(false)
-function toggleFilters() {
-  showFilters.value = !showFilters.value
 }
 </script>
 <template>
