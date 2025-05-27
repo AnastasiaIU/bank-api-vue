@@ -11,9 +11,10 @@ export const API_ENDPOINTS = {
   accountsById: (id) => `${API_BASE_URL}/users/${id}/accounts`,
   accounts: `${API_BASE_URL}/accounts`,
   usersPending: `${API_BASE_URL}/users/pending`,
-  usersApproval: (id) => `${API_BASE_URL}/users/${id}/approval`,
+  usersApproval: (id) => `${API_BASE_URL}/users/${id}/approval-status`,
   usersById: (id) => `${API_BASE_URL}/users/${id}`,
   accountsByIdReview: (id) => `${API_BASE_URL}/users/${id}/accounts/review`,
   updateLimits: (iban) => `${API_BASE_URL}/accounts/${iban}/limits`,
-  accountsByName: (firstName, lastName) => `${API_BASE_URL}/users/accounts/${firstName}/${lastName}`
+  accountsByName: (firstName, lastName) => `${API_BASE_URL}/users/accounts/${firstName}/${lastName}`,
+  userAccounts: (id) => `${API_BASE_URL}/users/${id}/accounts`,
 };
