@@ -10,10 +10,12 @@ import router from './router'
 const app = createApp(App)
 const pinia = createPinia()
 
-const authStore = useAuthStore(pinia);
-await authStore.initializeAuth();
-
 app.use(pinia)
 app.use(router)
 
-app.mount('#app')
+    (async () => {
+        const authStore = useAuthStore(pinia)
+        await authStore.initializeAuth()
+
+        app.mount('#app')
+    })();
