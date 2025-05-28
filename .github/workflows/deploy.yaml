@@ -1,18 +1,32 @@
-name: Build Vue
+name: Deploy
 
 on:
-  pull_request:
-    branches: [ "master" ]
+  push:
+    branches:
+      - master
 
 jobs:
-  build_vue:
+  deploy:
     runs-on: ubuntu-latest
-    name: Build Vue
+
     steps:
-    - uses: actions/checkout@v2
-    - id: Build-Vue
-      uses: xRealNeon/VuePagesAction@1.0.1
-      with:
-        username: AnastasiaIU
-        reponame: bank-api-vue
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
