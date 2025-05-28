@@ -1,0 +1,1 @@
+function n(r){return new Intl.NumberFormat("nl-NL",{style:"currency",currency:"EUR"}).format(r)}function t(r){if(typeof r=="number")return r;if(!r)return 0;const e=r.replace(/\s/g,"").replace(/\u00A0/g,"").replace(/[^\d,.-]/g,"");return parseFloat(e.replace(/\./g,"").replace(",","."))||0}export{n as f,t as p};
