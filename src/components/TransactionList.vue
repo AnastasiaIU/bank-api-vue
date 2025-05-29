@@ -1,36 +1,146 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axios from '@/utils/axios'
+import { useAuthStore } from '@/stores/auth'
+import { API_ENDPOINTS } from '@/utils/config'
+import TransactionFilters from './TransactionFilters.vue'
 
+const authStore = useAuthStore()
+const route = useRoute()
+const router = useRouter()
+
+const accounts = ref([])
+const selectedAccount = ref(null)
 const transactions = ref([])
 
-onMounted(async () => {
+const filters = ref({
+  startDate: route.query.startDate || '',
+  endDate: route.query.endDate || '',
+  amount: route.query.amount || '',
+  comparison: route.query.comparison || '',
+  sourceIban: route.query.sourceIban || '',
+  targetIban: route.query.targetIban || ''
+})
+
+const showFilters = ref(false)
+
+function toggleFilters() {
+  showFilters.value = !showFilters.value
+}
+
+function clearFilters() {
+  Object.keys(filters.value).forEach(k => (filters.value[k] = ''))
+  updateUrlFilters()
+}
+
+function updateFilters(newFilters) {
+  filters.value = newFilters
+  updateUrlFilters()
+}
+
+function updateUrlFilters() {
+  const cleanedFilters = Object.fromEntries(
+    Object.entries(filters.value).filter(([_, value]) => value !== '' && value != null)
+  )
+
+  router.push({
+    query: cleanedFilters
+  })
+}
+
+onMounted(fetchAccounts)
+
+watch(() => route.query, (newQuery) => {
+  Object.assign(filters.value, newQuery)
+  fetchTransactions()
+})
+
+async function fetchAccounts() {
   try {
-    const response = await axios.get('http://localhost:8080/accounts/1/transactions')
+    const response = await axios.get(API_ENDPOINTS.accountsById(authStore.user.id))
+    accounts.value = response.data
+
+    if (accounts.value.length > 0) {
+      selectedAccount.value = accounts.value[0]
+      await fetchTransactions()
+    }
+  } catch (error) {
+    console.error('Failed to fetch accounts:', error)
+  }
+}
+
+async function fetchTransactions() {
+  if (!selectedAccount.value) return
+
+  try {
+    const params = new URLSearchParams()
+    for (const [key, value] of Object.entries(filters.value)) {
+      if (value) {
+        params.append(key, value)
+      }
+    }
+
+    const url = `${API_ENDPOINTS.accountTransactionsbyId(selectedAccount.value.id)}?${params.toString()}`
+    const response = await axios.get(url)
     transactions.value = response.data
   } catch (error) {
     console.error('Failed to fetch transactions:', error)
   }
-})
-</script>
+}
 
+function switchAccount(type) {
+  selectedAccount.value = accounts.value.find(acc => acc.type === type)
+  fetchTransactions()
+}
+</script>
 <template>
-  <section class="card p-4 m-4">
-    <h5 class="text-center mb-3">Transaction History</h5>
+  <div class="m-3 text-center">
+  <button
+    class="btn me-2"
+    :class="selectedAccount?.type === 'CHECKING' ? 'btn-primary' : 'btn-secondary'"
+    @click="switchAccount('CHECKING')"
+  >
+    View CHECKING
+  </button>
+
+  <button
+    class="btn"
+    :class="selectedAccount?.type === 'SAVINGS' ? 'btn-primary' : 'btn-secondary'"
+    @click="switchAccount('SAVINGS')"
+  >
+    View SAVINGS
+  </button>
+</div>
+
+  <div v-if="selectedAccount">
+    <h1 class="h2 text-center mb-3">Transactions for {{ selectedAccount.iban}}</h1>
+
+    <div class="text-center mb-3">
+      <button class="btn btn-primary" @click="toggleFilters">
+        {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+      </button>
+    </div>
+    <TransactionFilters 
+      v-if="showFilters"
+      :filters="filters"
+      @update:filters="updateFilters"
+      @submit="fetchTransactions"
+      @clear="clearFilters"/>
 
     <div v-if="transactions.length === 0" class="text-muted text-center">
       No transactions found.
     </div>
 
-    <ul class="list-group">
+    <ul class="list-group mb-4">
       <li v-for="tx in transactions" :key="tx.id" class="list-group-item d-flex justify-content-between align-items-start">
         <div>
-          <div class="fw-bold">{{ tx.description }}</div>
-          <small class="text-muted">{{ new Date(tx.timestamp).toLocaleString() }}</small>
+          <div class="fw-bold">{{ new Date(tx.timestamp).toLocaleString() }}</div>
+          <small class="text-muted">{{ tx.description }}</small>
         </div>
         <div class="text-end">
-          <div :class="tx.amount > 0 ? 'text-success' : 'text-danger'">
-            €{{ tx.amount.toFixed(2) }}
+          <div :class="tx.targetIban === selectedAccount.iban ? 'text-success' : ''">
+            {{ tx.targetIban === selectedAccount.iban ? '+' : '-' }}€{{ tx.amount.toFixed(2) }}
           </div>
           <small class="text-muted">
             From: {{ tx.sourceIban || 'N/A' }}<br />
@@ -39,15 +149,5 @@ onMounted(async () => {
         </div>
       </li>
     </ul>
-  </section>
+  </div>
 </template>
-
-<style scoped>
-.card {
-  max-width: 600px;
-  margin: auto;
-}
-.list-group-item {
-  padding: 1rem;
-}
-</style>
