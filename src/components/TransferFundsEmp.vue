@@ -7,9 +7,8 @@ import { useForm } from 'vee-validate';
 import { parseEuro } from '@/utils/formatters';
 import transferEmployeeSchema from '@/schemas/transferEmployeeSchema';
 import { ref } from 'vue';
-import { useTransactionStore } from '@/stores/transaction'
+
 const toastRef = ref(null);
-const transactionStore = useTransactionStore();
 
 const { handleSubmit, meta, resetForm } = useForm({
     validationSchema: transferEmployeeSchema,
@@ -17,18 +16,24 @@ const { handleSubmit, meta, resetForm } = useForm({
 });
 
 const onSubmit = handleSubmit(async (values) => {
+    try {
         const transaction = {
             sourceAccount: values.fromAccountIban,
             targetAccount: values.toAccountIban,
             amount: parseEuro(values.amount),
             description: values.description || null,
+        };
+        const response = await axios.post(API_ENDPOINTS.transactions, transaction);
+        if (response.status === 201) {
+            toastRef.value.setToast('Transaction created successfully!', 'success');
+            resetForm();
+        } else {
+            toastRef.value.setToast('Failed to create transaction. Please try again.', 'error');
         }
-
-        const { message, type } = await transactionStore.processTransaction(transaction)
-        toastRef.value.setToast(message, type);
-
-        resetForm();
-})
+    } catch (error) {
+        toastRef.value.setToast('An error occurred while creating the transaction.', 'error');
+    }
+});
 </script>
 
 <template>
