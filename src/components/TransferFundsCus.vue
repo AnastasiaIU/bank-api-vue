@@ -1,85 +1,59 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import axios from '@/utils/axios'
-import { useAuthStore } from '@/stores/auth'
-import { API_ENDPOINTS } from '@/utils/config'
-import { useForm } from 'vee-validate'
-import transferCustomerSchema from '@/schemas/transferCustomerSchema'
-import AccountDropdown from './shared/forms/AccountDropdown.vue'
-import BaseInput from '@/components/shared/forms/BaseInput.vue'
-import TextInput from './shared/forms/TextInput.vue'
-import Toast from './shared/Toast.vue'
-import { parseEuro } from '@/utils/formatters';
+import { ref } from 'vue';
+import TransferBetweenUsers from './TransferBetweenUsers.vue';
+import TransferBetweenOwnAccounts from './TransferBetweenOwnAccounts.vue';
+import Toast from './shared/Toast.vue';
 
-const authStore = useAuthStore()
-
-const toastRef = ref(null)
-const accounts = ref([])
-
-const { handleSubmit, meta, resetForm, setFieldValue } = useForm({
-    validationSchema: transferCustomerSchema,
-    initialValues: {
-        fromAccountIban: '',
-        toAccountIban: '',
-        amount: '',
-        description: ''
-    },
-    validateOnMount: true
-})
-
-async function fetchAccounts() {
-    try {
-        const response = await axios.get(API_ENDPOINTS.accountsById(authStore.user.id))
-        accounts.value = response.data
-    } catch (error) {
-        console.error('Error fetching accounts:', error)
-    }
-}
-
-const onSubmit = handleSubmit(async (values) => {
-    try {
-        const transaction = {
-            sourceAccount: values.fromAccountIban,
-            targetAccount: values.toAccountIban,
-            amount: parseEuro(values.amount),
-            description: values.description || null,
-        }
-        const response = await axios.post(API_ENDPOINTS.transactions, transaction)
-        if (response.status === 201) {
-            toastRef.value.setToast('Transaction created successfully!', 'success')
-            resetForm()
-            await fetchAccounts()
-        } else {
-            toastRef.value.setToast('Failed to create transaction. Please try again.', 'error')
-        }
-    } catch (error) {
-        toastRef.value.setToast('An error occurred while creating the transaction.', 'error')
-    }
-})
-
-onMounted(fetchAccounts)
+const activeTab = ref('lookup');
+const toastRef = ref(null);
 </script>
 
 <template>
-    <section class="card col-md-6 col-lg-5 col-xl-4 p-4 m-4">
-        <h1 class="h2 text-center">Transfer Funds</h1>
-        <form @submit.prevent="onSubmit" class="d-flex flex-column gap-2">
-            <AccountDropdown :accounts="accounts" label="From Account"
-                @update:selectedAccount="account => setFieldValue('fromAccountIban', account ? account.iban : '')" />
-            <AccountDropdown :accounts="accounts" label="To Account"
-                @update:selectedAccount="account => setFieldValue('toAccountIban', account ? account.iban : '')" />
-            <BaseInput name="amount" label="Amount to Transfer" type="currency" />
-            <TextInput name="description" label="Description" />
-            <button class="btn btn-primary" type="submit" :disabled="!meta.valid">Transfer</button>
-        </form>
-        <Toast ref="toastRef" />
-    </section>
+  <section class="card col-md-6 col-lg-5 col-xl-4 p-0 m-4">
+    <ul class="nav nav-tabs mb-0">
+      <li class="nav-item">
+        <button class="nav-link" :class="{ active: activeTab === 'lookup' }" @click="activeTab = 'lookup'">
+          IBAN Lookup
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" :class="{ active: activeTab === 'transfer' }" @click="activeTab = 'transfer'">
+          Transfer Funds
+        </button>
+      </li>
+    </ul>
+    <div class="tab-content bg-white border border-top-0 rounded-bottom p-4">
+      <div v-if="activeTab === 'lookup'">
+        <TransferBetweenUsers :toast="toastRef" />
+      </div>
+      <div v-else-if="activeTab === 'transfer'">
+        <TransferBetweenOwnAccounts :toast="toastRef" />
+      </div>
+    </div>
+    <Toast ref="toastRef" />
+  </section>
 </template>
 
 <style scoped>
-.btn:disabled {
-    background-color: #ccc;
-    border: #ccc;
-    cursor: not-allowed;
+.nav-tabs {
+  margin-bottom: 0;
+}
+
+.tab-content {
+  margin-top: 0;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  background: #fff;
+  border-radius: 0 0 0.375rem 0.375rem;
+}
+
+.nav-tabs .nav-link.active {
+  font-weight: bold;
+  background-color: #f8f9fa;
+  border-color: #dee2e6 #dee2e6 #fff;
+}
+
+.nav-link {
+  color: var(--color-primary);
 }
 </style>

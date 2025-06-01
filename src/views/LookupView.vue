@@ -1,5 +1,5 @@
 <script setup>
-import FindIban from '@/components/FindIban.vue';
+import FindIban from '@/components/TransferBetweenUsers.vue';
 </script>
 
 <template>
