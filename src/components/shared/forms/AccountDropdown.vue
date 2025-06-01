@@ -14,6 +14,10 @@ const props = defineProps({
         type: String,
         required: true
     },
+        balanceVisible: {
+        type: Boolean,
+        default: true
+    }
 });
 
 const emit = defineEmits(['update:selectedAccount']);
@@ -46,7 +50,7 @@ watch(
         <select :id="label" v-model="localSelectedIban" class="form-select">
             <option disabled value="">Select an account</option>
             <option v-for="account in accounts" :key="account.iban" :value="account.iban">
-                {{ account.iban }} ({{ formatEuro(account.balance) }})
+                {{ account.iban }} <span v-if="balanceVisible"> ({{ formatEuro(account.balance) }})</span>
             </option>
         </select>
     </div>
