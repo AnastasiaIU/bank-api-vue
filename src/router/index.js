@@ -28,13 +28,13 @@ const router = createRouter({
       path: '/transfer',
       name: ROUTE_NAMES.TRANSFER,
       component: () => import('../views/TransferFundsView.vue'),
-      meta: { guards: ['auth'] }
+      meta: { guards: ['auth', 'approval'] }
     },
     {
       path: '/transactions',
       name: ROUTE_NAMES.TRANSACTIONS,
       component: () => import('../views/AccountTransactionsViews.vue'),
-      meta: { guards: ['auth'] }
+      meta: { guards: ['auth', 'approval'] }
     },
     {
       path: '/account',
@@ -52,14 +52,14 @@ const router = createRouter({
       path: '/atm/deposit',
       name: ROUTE_NAMES.ATM_DEPOSIT,
       component: () => import('../views/AtmView.vue'),
-      meta: { guards: ['auth', 'customer'] },
+      meta: { guards: ['auth', 'customer', 'approval'] },
       props: { transactionType: 'Deposit' }
     },
     {
       path: '/atm/withdraw',
       name: ROUTE_NAMES.ATM_WITHDRAW,
       component: () => import('../views/AtmView.vue'),
-      meta: { guards: ['auth', 'customer'] },
+      meta: { guards: ['auth', 'customer', 'approval'] },
       props: { transactionType: 'Withdraw' }
     },
     {
@@ -77,7 +77,7 @@ const router = createRouter({
       path: '/lookup',
       name: ROUTE_NAMES.LOOKUP,
       component: () => import('../views/LookupView.vue'),
-      meta: { guards: ['auth', 'customer'] }
+      meta: { guards: ['auth', 'customer', 'approval'] }
     }
   ],
 })
@@ -87,6 +87,7 @@ router.beforeEach((to, from, next) => {
 
   const isAuth = authStore.isAuthenticated
   const isEmployee = authStore.isEmployee
+  const isApproved = authStore.isApproved
   const guards = to.meta.guards || []
 
   if (guards.includes('auth') && !isAuth) {
@@ -102,6 +103,10 @@ router.beforeEach((to, from, next) => {
   }
 
   if (guards.includes('customer') && isEmployee) {
+    return next({ name: 'welcome' })
+  }
+
+  if (guards.includes('approval') && !isApproved) {
     return next({ name: 'welcome' })
   }
 

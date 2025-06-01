@@ -18,6 +18,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   const isAuthenticated = computed(() => !!token.value);
   const isEmployee = computed(() => user.value?.role === "EMPLOYEE");
+  const isApproved = computed(() => user.value?.isApproved === "APPROVED");
 
   const accountStore = useAccountStore();
 
@@ -125,6 +126,7 @@ export const useAuthStore = defineStore("auth", () => {
     token,
     isAuthenticated,
     isEmployee,
+    isApproved,
     login,
     logout,
     initializeAuth,

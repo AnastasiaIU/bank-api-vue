@@ -13,13 +13,13 @@
         <Card
           title="Customers Without Accounts"
           subtitle="View and manage all customers who do not yet have accounts"
-          route=""
+          route="/users/review"
         />
       </div>
     </div>
 
     <!-- Approved Customer -->
-    <div v-else-if="authStore.user?.isApproved" class="mt-3">
+    <div v-else-if="authStore.isApproved" class="mt-3">
       <div class="row row-cols-1 row-cols-md-2 g-4 mt-3 justify-content-center">
         <Card
           title="Tranfer Funds"
@@ -31,6 +31,12 @@
           title="Transaction History"
           subtitle="Review your past transactions and account activities"
           route="/transactions"
+        />
+
+        <Card
+          title="IBAN Lookup"
+          subtitle="Find other accounts by their IBAN"
+          route="/lookup"
         />
       </div>
     </div>
