@@ -163,16 +163,10 @@ onMounted(async () => {
 
 <style scoped>
 ::v-deep(.form-control) {
-  font-size: 0.85rem;
-  height: auto;
+  font-size: 1rem;
 }
 
-::v-deep(.form-control::placeholder) {
-  font-size: 0.75rem;
+::v-deep(label) {
+  display: none;
 }
-
-td > * {
-  display: flex;
-}
-
 </style>
