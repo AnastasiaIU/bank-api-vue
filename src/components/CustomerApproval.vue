@@ -59,7 +59,7 @@ const fetchAccounts = async () => {
         Authorization: `Bearer ${token}`
       }
     })
-    accounts.value = res.data;
+    accounts.value = res.data
   } catch (error) {
     console.error('Error fetching accounts:', error)
   }
@@ -68,7 +68,7 @@ const fetchAccounts = async () => {
 const sendApproval = async (status, formData) => {
   try {
     await axios.put(API_ENDPOINTS.usersApproval(userId), {
-      approvalStatus: status,
+      approvalStatus: status
     }, {
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -108,15 +108,15 @@ onMounted(async () => {
           <div class="table-responsive">
             <table class="table table-bordered align-middle table-hover">
               <thead class="table-light">
-                <tr>
-                  <th></th>
-                  <th class="d-none">User ID</th>
-                  <th>IBAN</th>
-                  <th>Type</th>
-                  <th>Daily Limit</th>
-                  <th>Withdraw Limit</th>
-                  <th>Absolute Limit</th>
-                </tr>
+              <tr>
+                <th></th>
+                <th class="d-none">User ID</th>
+                <th>IBAN</th>
+                <th>Type</th>
+                <th>Daily Limit (€)</th>
+                <th>Withdraw Limit (€)</th>
+                <th>Absolute Limit (€)</th>
+              </tr>
               </thead>
               <tbody>
                 <tr v-for="(account, index) in accounts" :key="account.iban">
