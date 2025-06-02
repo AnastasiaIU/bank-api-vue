@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
-import { API_ENDPOINTS } from "@/utils/config.js";
+import {API_ENDPOINTS} from "@/utils/config.js";
 import BaseInput from "@/components/shared/forms/BaseInput.vue";
 import setLimitsSchema from "@/schemas/setLimitsSchema";
 import { useForm } from "vee-validate";
@@ -48,7 +48,7 @@ const fetchUser = async () => {
     })
     user.value = res.data
   } catch (error) {
-    console.error("Error fetching user:", error)
+    console.error('Error fetching user:', error)
   }
 }
 
@@ -56,22 +56,22 @@ const fetchAccounts = async () => {
   try {
     const res = await axios.get(API_ENDPOINTS.accountsByIdReview(userId), {
       headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+        Authorization: `Bearer ${token}`
+      }
+    })
     accounts.value = res.data;
   } catch (error) {
-    console.error('Error fetching accounts:', error);
+    console.error('Error fetching accounts:', error)
   }
-};
+}
 
 const sendApproval = async (status, formData) => {
   try {
     await axios.put(API_ENDPOINTS.usersApproval(userId), {
-        approvalStatus: status,
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      approvalStatus: status,
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
 
     if (status === 'APPROVED') {
       await axios.post(API_ENDPOINTS.userAccounts(userId), formData.accounts, {
@@ -79,23 +79,20 @@ const sendApproval = async (status, formData) => {
       })
     }
 
-    await router.push(/users/review)
+    await router.push('/users/review')
   } catch (error) {
     console.error('Error during approval:', error)
   }
-};
+}
 
 onMounted(async () => {
-  await Promise.all([fetchAccounts(), fetchUser()])
+  await Promise.all([ fetchAccounts(), fetchUser()])
 })
 </script>
 
 <template>
   <div class="container py-5">
-    <div
-      class="card shadow-sm p-4 border-top border-primary"
-      style="border-top-width: 5px"
-    >
+    <div class="card shadow-sm p-4 border-top border-primary" style="border-top-width: 5px;">
       <h2 class="mb-4">User Account Review</h2>
 
       <div class="row">
@@ -157,12 +154,8 @@ onMounted(async () => {
 
       <!-- Approve / Reject Buttons -->
       <div class="mt-4 text-end">
-        <button class="btn btn-success me-2"  @click="onApprove">
-          Approve
-        </button>
-        <button class="btn btn-danger" @click="sendApproval('REJECTED')">
-          Reject
-        </button>
+        <button class="btn btn-success me-2"  @click="onApprove">Approve</button>
+        <button class="btn btn-danger" @click="sendApproval('REJECTED')">Reject</button>
       </div>
     </div>
   </div>
@@ -180,7 +173,6 @@ onMounted(async () => {
 
 td > * {
   display: flex;
-
 }
 
 </style>
