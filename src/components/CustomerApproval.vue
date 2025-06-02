@@ -4,19 +4,40 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import {API_ENDPOINTS} from "@/utils/config.js";
-import LimitDropdown from '@/components/shared/forms/LimitDropdown.vue'
-
+import BaseInput from "@/components/shared/forms/BaseInput.vue";
+import setLimitsSchema from "@/schemas/setLimitsSchema";
+import { useForm } from "vee-validate";
+import { parseEuro } from "@/utils/formatters";
 
 const router = useRouter()
 const route = useRoute()
 const userId = route.params.id
 
+const formContext = useForm({
+  validationSchema: setLimitsSchema,
+});
+
+const { handleSubmit } = formContext;
 
 const authStore = useAuthStore()
 const token = authStore.token
 
 const user = ref({})
 const accounts = ref([])
+
+const onApprove = handleSubmit((values) => {
+  const parsedAccounts = values.accounts.map((acc, index) => ({
+    iban: accounts.value[index].iban,    
+    type: accounts.value[index].type, 
+    balance: accounts.value[index].balance,
+    dailyLimit: parseEuro(acc.dailyLimit),
+    withdrawLimit: parseEuro(acc.withdrawLimit),
+    absoluteLimit: parseEuro(acc.absoluteLimit),
+  }));
+
+  sendApproval("APPROVED", { accounts: parsedAccounts });
+});
+
 
 const fetchUser = async () => {
   try {
@@ -44,7 +65,7 @@ const fetchAccounts = async () => {
   }
 }
 
-const sendApproval = async (status) => {
+const sendApproval = async (status, formData) => {
   try {
     await axios.put(API_ENDPOINTS.usersApproval(userId), {
       approvalStatus: status
@@ -53,7 +74,7 @@ const sendApproval = async (status) => {
     })
 
     if (status === 'APPROVED') {
-      await axios.post(API_ENDPOINTS.userAccounts(userId), accounts.value, {
+      await axios.post(API_ENDPOINTS.userAccounts(userId), formData.accounts, {
         headers: { Authorization: `Bearer ${token}` }
       })
     }
@@ -98,21 +119,33 @@ onMounted(async () => {
               </tr>
               </thead>
               <tbody>
-              <tr v-for="(account, index) in accounts" :key="account.iban">
-                <td>{{ index + 1 }}</td>
-                <td class="d-none">{{ userId }}</td>
-                <td>{{ account.iban }}</td>
-                <td>{{ account.type }}</td>
-                <td>
-                  <LimitDropdown v-model="account.dailyLimit" :options="[0, 1000, 2000, 3000, 5000]" />
-                </td>
-                <td>
-                  <LimitDropdown v-model="account.withdrawLimit" :options="[0, 500, 1000, 2000, 3000]" />
-                </td>
-                <td>
-                  <LimitDropdown v-model="account.absoluteLimit" :options="[0, -100, -200, -300, -500]" />
-                </td>
-              </tr>
+                <tr v-for="(account, index) in accounts" :key="account.iban">
+                  <td>{{ index + 1 }}</td>
+                  <td class="d-none">{{ userId }}</td>
+                  <td>{{ account.iban }}</td>
+                  <td>{{ account.type }}</td>
+                  <td>
+                    <BaseInput
+                      :name="`accounts[${index}].dailyLimit`"
+                      type="currency"
+                      placeholder="Enter daily limit"
+                    />
+                  </td>
+                  <td>
+                    <BaseInput
+                       :name="`accounts[${index}].withdrawLimit`"
+                      type="currency"
+                      placeholder="Enter withdraw limit"
+                    />
+                  </td>
+                  <td>
+                    <BaseInput
+                    :name="`accounts[${index}].absoluteLimit`"
+                      type="currency"
+                      placeholder="Enter absolute limit"
+                    />
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -121,9 +154,19 @@ onMounted(async () => {
 
       <!-- Approve / Reject Buttons -->
       <div class="mt-4 text-end">
-        <button class="btn btn-success me-2" @click="sendApproval('APPROVED')">Approve</button>
+        <button class="btn btn-success me-2"  @click="onApprove">Approve</button>
         <button class="btn btn-danger" @click="sendApproval('REJECTED')">Reject</button>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+::v-deep(.form-control) {
+  font-size: 1rem;
+}
+
+::v-deep(label) {
+  display: none;
+}
+</style>
