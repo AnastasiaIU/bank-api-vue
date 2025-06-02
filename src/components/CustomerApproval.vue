@@ -1,17 +1,17 @@
 <script setup>
-import { onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import axios from "axios";
-import { useAuthStore } from "@/stores/auth";
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
 import { API_ENDPOINTS } from "@/utils/config.js";
 import BaseInput from "@/components/shared/forms/BaseInput.vue";
 import setLimitsSchema from "@/schemas/setLimitsSchema";
 import { useForm } from "vee-validate";
 import { parseEuro } from "@/utils/formatters";
 
-const router = useRouter();
-const route = useRoute();
-const userId = route.params.id;
+const router = useRouter()
+const route = useRoute()
+const userId = route.params.id
 
 const formContext = useForm({
   validationSchema: setLimitsSchema,
@@ -19,11 +19,11 @@ const formContext = useForm({
 
 const { handleSubmit } = formContext;
 
-const authStore = useAuthStore();
-const token = authStore.token;
+const authStore = useAuthStore()
+const token = authStore.token
 
-const user = ref({});
-const accounts = ref([]);
+const user = ref({})
+const accounts = ref([])
 
 const onApprove = handleSubmit((values) => {
   const parsedAccounts = values.accounts.map((acc, index) => ({
@@ -43,14 +43,14 @@ const fetchUser = async () => {
   try {
     const res = await axios.get(API_ENDPOINTS.usersById(userId), {
       headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    user.value = res.data;
+        Authorization: `Bearer ${token}`
+      }
+    })
+    user.value = res.data
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error fetching user:", error)
   }
-};
+}
 
 const fetchAccounts = async () => {
   try {
@@ -61,37 +61,33 @@ const fetchAccounts = async () => {
     });
     accounts.value = res.data;
   } catch (error) {
-    console.error("Error fetching accounts:", error);
+    console.error('Error fetching accounts:', error);
   }
 };
 
 const sendApproval = async (status, formData) => {
   try {
-    await axios.put(
-      API_ENDPOINTS.usersApproval(userId),
-      {
+    await axios.put(API_ENDPOINTS.usersApproval(userId), {
         approvalStatus: status,
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
 
-    if (status === "APPROVED") {
+    if (status === 'APPROVED') {
       await axios.post(API_ENDPOINTS.userAccounts(userId), formData.accounts, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+        headers: { Authorization: `Bearer ${token}` }
+      })
     }
 
-    await router.push("/users/review");
+    await router.push(/users/review)
   } catch (error) {
-    console.error("Error during approval:", error);
+    console.error('Error during approval:', error)
   }
 };
 
 onMounted(async () => {
-  await Promise.all([fetchAccounts(), fetchUser()]);
-});
+  await Promise.all([fetchAccounts(), fetchUser()])
+})
 </script>
 
 <template>
