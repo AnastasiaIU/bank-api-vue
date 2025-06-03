@@ -5,6 +5,7 @@ import axios from '@/utils/axios'
 import { useAuthStore } from '@/stores/auth'
 import { API_ENDPOINTS } from '@/utils/config'
 import TransactionFilters from './TransactionFilters.vue'
+import TransactionCard from '@/components/TransactionCard.vue'
 
 const authStore = useAuthStore()
 const route = useRoute()
@@ -133,21 +134,12 @@ function switchAccount(type) {
     </div>
 
     <ul class="list-group mb-4">
-      <li v-for="tx in transactions" :key="tx.id" class="list-group-item d-flex justify-content-between align-items-start">
-        <div>
-          <div class="fw-bold">{{ new Date(tx.timestamp).toLocaleString() }}</div>
-          <small class="text-muted">{{ tx.description }}</small>
-        </div>
-        <div class="text-end">
-          <div :class="tx.targetIban === selectedAccount.iban ? 'text-success' : ''">
-            {{ tx.targetIban === selectedAccount.iban ? '+' : '-' }}€{{ tx.amount.toFixed(2) }}
-          </div>
-          <small class="text-muted">
-            From: {{ tx.sourceIban || 'N/A' }}<br />
-            To: {{ tx.targetIban || 'N/A' }}
-          </small>
-        </div>
-      </li>
+      <TransactionCard
+        v-for="tx in transactions"
+        :key="tx.id"
+        :transaction="tx"
+        :reference-iban="selectedAccount.iban"
+      />
     </ul>
   </div>
 </template>

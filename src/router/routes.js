@@ -9,5 +9,6 @@ export const ROUTE_NAMES = {
     CUSTOMER_REVIEW: 'customer-review',
     ATM_WITHDRAW: 'atm-withdraw',
     ACCOUNTS: 'accounts',
-    CUSTOMER_APPROVAL: 'customer-approval'
+    CUSTOMER_APPROVAL: 'customer-approval',
+    EMPLOYEE_TRANSACTIONS: 'employee-transactions'
 }
