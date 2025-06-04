@@ -49,7 +49,7 @@ onMounted(() => {
 
         <ul v-else class="list-group">
           <li
-              v-for="(account, index) in accounts.filter(acc => acc.status !== 'CLOSED')"
+              v-for="(account, index) in accounts"
               :key="index"
               class="list-group-item d-flex justify-content-between"
           >
