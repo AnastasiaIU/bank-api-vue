@@ -20,7 +20,7 @@ async function fetchAccountDetails(id) {
       Authorization: `Bearer ${token}`
     }
   })
-  accounts.value = response.data
+  accounts.value = response.data.filter(acc => acc.status === 'ACTIVE')
   combinedTotal.value = accounts.value.reduce((sum, acc) => sum + acc.balance, 0)
 }
 
@@ -49,7 +49,7 @@ onMounted(() => {
 
         <ul v-else class="list-group">
           <li
-              v-for="(account, index) in accounts"
+              v-for="(account, index) in accounts.filter(acc => acc.status !== 'CLOSED')"
               :key="index"
               class="list-group-item d-flex justify-content-between"
           >

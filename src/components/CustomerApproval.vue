@@ -27,7 +27,8 @@ const accounts = ref([])
 
 const onApprove = handleSubmit((values) => {
   const parsedAccounts = values.accounts.map((acc, index) => ({
-    iban: accounts.value[index].iban,    
+    iban: accounts.value[index].iban,
+    status: accounts.value[index].status,
     type: accounts.value[index].type, 
     balance: accounts.value[index].balance,
     dailyLimit: parseEuro(acc.dailyLimit),
