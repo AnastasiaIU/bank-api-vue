@@ -78,6 +78,12 @@ const router = createRouter({
       name: ROUTE_NAMES.LOOKUP,
       component: () => import('../views/LookupView.vue'),
       meta: { guards: ['auth', 'customer', 'approval'] }
+    },
+    {
+      path: '/users/active',
+      name: ROUTE_NAMES.ACTIVE_USERS,
+      component: () => import('../views/ActiveUsersAccountsView.vue'),
+      meta: { guards: ['auth', 'employee'] }
     }
   ],
 })

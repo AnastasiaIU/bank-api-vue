@@ -20,7 +20,7 @@ async function fetchAccountDetails(id) {
       Authorization: `Bearer ${token}`
     }
   })
-  accounts.value = response.data
+  accounts.value = response.data.filter(acc => acc.status === 'ACTIVE')
   combinedTotal.value = accounts.value.reduce((sum, acc) => sum + acc.balance, 0)
 }
 

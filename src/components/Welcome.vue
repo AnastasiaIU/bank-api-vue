@@ -15,6 +15,12 @@
           subtitle="View and manage all customers who do not yet have accounts"
           route="/users/review"
         />
+
+        <Card
+            title="All Active Users Accounts"
+            subtitle="View and manage all customers who do not yet have accounts"
+            route="/users/active"
+        />
       </div>
     </div>
 
