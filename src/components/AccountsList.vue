@@ -1,11 +1,13 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 
+import axios from '@/utils/axios'
 import { useAuthStore } from "@/stores/auth";
 import { useAccountStore } from "@/stores/account.js";
 import { formatEuro } from "../utils/formatters.js";
 import UpdateLimitsModal from "@/components/UpdateLimitsModal.vue";
 import Toast from "./shared/Toast.vue";
+import { API_ENDPOINTS } from "@/utils/config";
 import { useRouter } from 'vue-router'
 import { ROUTE_NAMES } from '../router/routes.js'
 
@@ -27,6 +29,18 @@ function openModal() {
   if (selectedAccount.value) {
     showModal.value = true;
   }
+}
+
+async function confirmCloseAccount()
+{
+   await axios.delete(
+        API_ENDPOINTS.closeAccount(selectedAccount.value.iban),
+        {
+          headers: {
+            Authorization: `Bearer ${authStore.token}`
+          }
+        }
+    );
 }
 
 async function submitLimitUpdate(updatedData) {
@@ -81,6 +95,13 @@ function goToTransactionList() {
   >
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="h2 m-0">Customer Accounts</h1>
+      <button
+          class="btn btn-danger"
+          @click="confirmCloseAccount"
+          :disabled="!selectedAccount"
+      >
+        Close Account
+      </button>
 
       <div class="d-flex gap-2">
         <button
