@@ -84,6 +84,12 @@ const router = createRouter({
       name: ROUTE_NAMES.ACTIVE_USERS,
       component: () => import('../views/ActiveUsersAccountsView.vue'),
       meta: { guards: ['auth', 'employee'] }
+    },
+    {
+      path: '/employee/transactions/:accountId',
+      name: ROUTE_NAMES.EMPLOYEE_TRANSACTIONS,
+      component: () => import('../views/EmployeeTransactionView.vue'),
+      meta: { guards: ['auth', 'employee'] }
     }
   ],
 })

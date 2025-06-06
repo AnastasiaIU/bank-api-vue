@@ -27,6 +27,15 @@ function clearAll() {
 <template>
   <div class="border p-3 rounded mb-3">
     <h5 class="mb-3">Transaction Filters</h5>
+    <div class="mb-2">
+  <label class="form-label">Description</label>
+  <input
+    type="text"
+    class="form-control"
+    v-model="localFilters.description"
+    placeholder="e.g. groceries, transfer, salary"
+  />
+</div>
 
     <!-- Amount -->
     <div class="row mb-3">

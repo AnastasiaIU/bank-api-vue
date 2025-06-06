@@ -5,6 +5,7 @@ import axios from '@/utils/axios'
 import { useAuthStore } from '@/stores/auth'
 import { API_ENDPOINTS } from '@/utils/config'
 import TransactionFilters from './TransactionFilters.vue'
+import TransactionCard from '@/components/TransactionCard.vue'
 
 const authStore = useAuthStore()
 const route = useRoute()
@@ -14,13 +15,19 @@ const accounts = ref([])
 const selectedAccount = ref(null)
 const transactions = ref([])
 
+const page = ref(0)
+const pageSize = ref(10)
+const totalPages = ref(0) 
+const totalElements = ref(0)
+
 const filters = ref({
   startDate: route.query.startDate || '',
   endDate: route.query.endDate || '',
   amount: route.query.amount || '',
   comparison: route.query.comparison || '',
   sourceIban: route.query.sourceIban || '',
-  targetIban: route.query.targetIban || ''
+  targetIban: route.query.targetIban || '',
+  description: route.query.description || ''
 })
 
 const showFilters = ref(false)
@@ -70,7 +77,7 @@ async function fetchAccounts() {
   }
 }
 
-async function fetchTransactions() {
+async function fetchTransactions(requestedPage = page.value) {
   if (!selectedAccount.value) return
 
   try {
@@ -81,11 +88,29 @@ async function fetchTransactions() {
       }
     }
 
+    params.append('page', requestedPage)
+    params.append('size', pageSize.value)
+
     const url = `${API_ENDPOINTS.accountTransactionsbyId(selectedAccount.value.id)}?${params.toString()}`
     const response = await axios.get(url)
-    transactions.value = response.data
+    transactions.value = response.data.content
+    totalPages.value = response.data.totalPages
+    totalElements.value = response.data.totalElements
+    page.value = response.data.number
   } catch (error) {
     console.error('Failed to fetch transactions:', error)
+  }
+}
+
+function previousPage() {
+  if (page.value > 0) {
+    fetchTransactions(page.value - 1)
+  }
+}
+
+function nextPage() {
+  if (page.value < totalPages.value - 1) {
+    fetchTransactions(page.value + 1)
   }
 }
 
@@ -133,21 +158,19 @@ function switchAccount(type) {
     </div>
 
     <ul class="list-group mb-4">
-      <li v-for="tx in transactions" :key="tx.id" class="list-group-item d-flex justify-content-between align-items-start">
-        <div>
-          <div class="fw-bold">{{ new Date(tx.timestamp).toLocaleString() }}</div>
-          <small class="text-muted">{{ tx.description }}</small>
-        </div>
-        <div class="text-end">
-          <div :class="tx.targetIban === selectedAccount.iban ? 'text-success' : ''">
-            {{ tx.targetIban === selectedAccount.iban ? '+' : '-' }}€{{ tx.amount.toFixed(2) }}
-          </div>
-          <small class="text-muted">
-            From: {{ tx.sourceIban || 'N/A' }}<br />
-            To: {{ tx.targetIban || 'N/A' }}
-          </small>
-        </div>
-      </li>
+      <TransactionCard
+        v-for="tx in transactions"
+        :key="tx.id"
+        :transaction="tx"
+        :reference-iban="selectedAccount.iban"
+      />
     </ul>
+    <nav aria-label="Page navigation" class="d-flex justify-content-center align-items-center m-4 gap-3">
+      <button class="btn btn-outline-primary" @click="previousPage" :disabled="page === 0"><i class="bi bi-chevron-left"></i> Previous</button>
+      <span class="text-muted fw-semibold">
+        Page {{ page + 1 }} of {{ totalPages }}
+      </span>
+      <button class="btn btn-outline-primary" @click="nextPage" :disabled="page >= totalPages - 1">Next <i class="bi bi-chevron-right"></i></button>
+    </nav>
   </div>
 </template>

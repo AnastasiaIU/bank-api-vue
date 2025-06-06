@@ -10,5 +10,6 @@ export const ROUTE_NAMES = {
     ATM_WITHDRAW: 'atm-withdraw',
     ACCOUNTS: 'accounts',
     CUSTOMER_APPROVAL: 'customer-approval',
-    ACTIVE_USERS: 'active-users'
+    ACTIVE_USERS: 'active-users',
+    EMPLOYEE_TRANSACTIONS: 'employee-transactions'
 }

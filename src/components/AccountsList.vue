@@ -8,9 +8,12 @@ import { formatEuro } from "../utils/formatters.js";
 import UpdateLimitsModal from "@/components/UpdateLimitsModal.vue";
 import Toast from "./shared/Toast.vue";
 import { API_ENDPOINTS } from "@/utils/config";
+import { useRouter } from 'vue-router'
+import { ROUTE_NAMES } from '../router/routes.js'
 
 const authStore = useAuthStore();
 const accountStore = useAccountStore();
+const router = useRouter();
 
 const page = ref(0);
 const pageSize = 10;
@@ -74,6 +77,15 @@ function nextPage() {
     page.value++;
   }
 }
+function goToTransactionList() {
+  if (selectedAccount.value) {
+    router.push({
+      name: ROUTE_NAMES.EMPLOYEE_TRANSACTIONS, 
+      params: { accountId: selectedAccount.value.id },
+      query: { iban: selectedAccount.value.iban }
+    });
+  }
+}
 </script>
 
 <template>
@@ -90,14 +102,21 @@ function nextPage() {
       >
         Close Account
       </button>
-      <button
-        class="btn btn-primary"
-        @click="openModal"
-        :disabled="!selectedAccount"
-      >
-        Update Account Limits
-      </button>
+
+      <div class="d-flex gap-2">
+        <button
+          class="btn btn-primary"
+          @click="openModal"
+          :disabled="!selectedAccount"
+        >
+          Update Account Limits
+        </button>
+        <button class="btn btn-primary" :disabled="!selectedAccount" @click="goToTransactionList"      >
+          View Transactions
+        </button>
+      </div>
     </div>
+    
 
     <div v-if="accountStore.error" class="alert alert-danger text-center">
       {{ accountStore.error }}
