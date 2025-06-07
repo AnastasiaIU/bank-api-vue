@@ -90,6 +90,12 @@ const router = createRouter({
       name: ROUTE_NAMES.EMPLOYEE_TRANSACTIONS,
       component: () => import('../views/EmployeeTransactionView.vue'),
       meta: { guards: ['auth', 'employee'] }
+    },
+    {
+      path: '/transactions/all',
+      name: ROUTE_NAMES.TRANSACTIONS_ALL,
+      component: () => import('../views/AllTransactionsView.vue'),
+      meta: { guards: ['auth', 'employee'] }
     }
   ],
 })

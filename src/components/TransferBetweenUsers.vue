@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
+import axios from '@/utils/axios';
 import TextInput from './shared/forms/TextInput.vue';
 import { API_ENDPOINTS } from '@/utils/config';
 import { useAuthStore } from '@/stores/auth';
@@ -79,6 +79,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         const transaction = {
             sourceAccount: formValues.fromAccountIban,
             targetAccount: formValues.toAccountIban,
+            initiatedBy: authStore.user.id,
             amount: parseEuro(formValues.amount),
             description: formValues.description || null,
         };
