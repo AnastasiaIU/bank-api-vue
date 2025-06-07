@@ -42,6 +42,7 @@ const onSubmit = handleSubmit(async (values) => {
         const transaction = {
             sourceAccount: values.fromAccountIban,
             targetAccount: values.toAccountIban,
+            initiatedBy: authStore.user.id,
             amount: parseEuro(values.amount),
             description: values.description || null,
         }

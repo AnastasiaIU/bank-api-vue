@@ -22,4 +22,6 @@ export const API_ENDPOINTS = {
   closeAccount: (iban) => `${API_BASE_URL}/accounts/${iban}/close`,
   activeAccounts: `${API_BASE_URL}/users/accounts/active`,
   closeUserAccountWithBankAcc: (id) => `${API_BASE_URL}/users/${id}/close`,
+  allAtmTransactions: `${API_BASE_URL}/atm/transactions`,
+  allTransactions: `${API_BASE_URL}/transactions`,
 };
