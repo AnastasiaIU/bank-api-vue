@@ -11,5 +11,6 @@ export const ROUTE_NAMES = {
     ACCOUNTS: 'accounts',
     CUSTOMER_APPROVAL: 'customer-approval',
     ACTIVE_USERS: 'active-users',
-    EMPLOYEE_TRANSACTIONS: 'employee-transactions'
+    EMPLOYEE_TRANSACTIONS: 'employee-transactions',
+    TRANSACTIONS_ALL: 'transactions-all'
 }

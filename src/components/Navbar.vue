@@ -60,8 +60,11 @@ function closeOffcanvas() {
           </button>
           <ul class="dropdown-menu" aria-labelledby="bankDropdown">
             <li><router-link class="dropdown-item" to="/">Home</router-link></li>
-            <li v-if="!authStore.isEmployee && authStore.isApproved">
+            <li v-if="authStore.isApproved">
               <router-link class="dropdown-item" to="/transfer">Transfer Funds</router-link>
+            </li>
+            <li v-if="authStore.isEmployee">
+              <router-link class="dropdown-item" to="/transactions/all">Transaction History</router-link>
             </li>
             <li
               v-if="!authStore.isEmployee && authStore.isApproved"
