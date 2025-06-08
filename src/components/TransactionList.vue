@@ -115,8 +115,12 @@ function nextPage() {
 }
 
 function switchAccount(type) {
-  selectedAccount.value = accounts.value.find(acc => acc.type === type)
-  fetchTransactions()
+  const newAccount = accounts.value.find(acc => acc.type === type)
+  if (newAccount && newAccount !== selectedAccount.value) {
+    selectedAccount.value = newAccount
+    page.value = 0 
+    fetchTransactions(0)
+  }
 }
 </script>
 <template>

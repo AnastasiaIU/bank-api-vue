@@ -9,6 +9,13 @@ const emit = defineEmits(['update:filters', 'submit', 'clear'])
 const localFilters = ref({ ...props.filters })
 
 function onInputChange(key, value) {
+  if (key === 'amount') {
+    const numeric = parseFloat(value)
+    if (isNaN(numeric) || numeric < 0.01) {
+      localFilters.value[key] = ''
+      return
+    }
+  }
   localFilters.value[key] = value
 }
 
@@ -44,6 +51,7 @@ function clearAll() {
         <input
           type="number"
           step="0.01"
+          min="0.01"
           class="form-control"
           :value="filters.amount"
           @input="onInputChange('amount', $event.target.value)"
