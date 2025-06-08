@@ -89,9 +89,9 @@ watch(
         values: {
           dailyLimit: account.dailyLimit ? formatEuro(account.dailyLimit) : "",
           absoluteLimit:
-      account.absoluteLimit !== null && account.absoluteLimit !== undefined
-        ? formatEuro(account.absoluteLimit)
-        : "",
+          account.absoluteLimit !== null && account.absoluteLimit !== undefined
+            ? formatEuro(account.absoluteLimit)
+            : "",
           withdrawLimit: account.withdrawLimit
             ? formatEuro(account.withdrawLimit)
             : "",

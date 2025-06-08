@@ -37,13 +37,13 @@ async function confirmCloseAccount()
         API_ENDPOINTS.closeAccount(selectedAccount.value.iban),
         {
           headers: {
-             Authorization: `Bearer ${authStore.token}`
+            Authorization: `Bearer ${authStore.token}`
           }
         }
     );
 
-     selectedAccount.value = null; // Reset selection
-    await fetchAccounts();        // Refresh account list
+     selectedAccount.value = null; 
+    await fetchAccounts();        
 }
 
 async function submitLimitUpdate(updatedData) {
