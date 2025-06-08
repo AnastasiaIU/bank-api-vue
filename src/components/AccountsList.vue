@@ -41,6 +41,9 @@ async function confirmCloseAccount()
           }
         }
     );
+
+     selectedAccount.value = null; 
+    await fetchAccounts();        
 }
 
 async function submitLimitUpdate(updatedData) {
@@ -94,11 +97,11 @@ function goToTransactionList() {
     class="container my-5"
   >
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="h2 m-0">Customer Accounts</h1>
+      <h1 class="h2 m-0">All Customer Bank Accounts</h1>
       <button
           class="btn btn-danger"
           @click="confirmCloseAccount"
-          :disabled="!selectedAccount"
+          :disabled="!selectedAccount || selectedAccount.status === 'CLOSED'"
       >
         Close Account
       </button>
@@ -107,11 +110,14 @@ function goToTransactionList() {
         <button
           class="btn btn-primary"
           @click="openModal"
-          :disabled="!selectedAccount"
+          :disabled="!selectedAccount || selectedAccount.status === 'CLOSED'"
         >
           Update Account Limits
         </button>
-        <button class="btn btn-primary" :disabled="!selectedAccount" @click="goToTransactionList"      >
+        <button class="btn btn-primary" 
+        :disabled="!selectedAccount || selectedAccount.status === 'CLOSED'"
+        @click="goToTransactionList"
+        >
           View Transactions
         </button>
       </div>
@@ -132,6 +138,7 @@ function goToTransactionList() {
           <th>IBAN</th>
           <th>Type</th>
           <th>Balance</th>
+          <th>Status</th>
         </tr>
       </thead>
       <tbody>
@@ -142,13 +149,15 @@ function goToTransactionList() {
             :class="[
               'clickable-row',
               { 'table-active': selectedAccount?.iban === account.iban },
+              { 'text-muted no-pointer': account.status === 'CLOSED' }
             ]"
-            @click="selectAccount(account)"
+            @click="account.status !== 'CLOSED' && selectAccount(account)"
           >
             <td>{{ account.firstName }} {{ account.lastName }}</td>
             <td>{{ account.iban }}</td>
             <td>{{ account.type }}</td>
             <td>{{ formatEuro(account.balance) }}</td>
+            <td> {{account.status}}</td>
           </tr>
         </template>
         <tr v-else>
@@ -201,5 +210,13 @@ function goToTransactionList() {
 <style scoped>
 .clickable-row {
   cursor: pointer;
+}
+
+.no-pointer {
+  cursor: default;
+}
+
+.no-pointer:hover {
+  background-color: none !important;
 }
 </style>

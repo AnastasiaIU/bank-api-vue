@@ -58,6 +58,20 @@ export const amountNotZeroRule = yup
     return !isNaN(num) && num > 0
   })
 
+  export const amountZeroAndNegativeRule = yup
+  .string()
+  .required('Amount is required')
+  .test('is-number', 'Amount must be a valid number', (value) => {
+    if (!value) return false;
+
+    // Allow digits, minus sign, dot, and comma
+    const clean = value.replace(/[^0-9,.\-]/g, '').replace(',', '.');
+    const num = parseFloat(clean);
+
+    return !isNaN(num);
+  });
+
+
 export const ibanRule = yup
   .string()
   .required('IBAN is required')

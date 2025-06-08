@@ -6,20 +6,32 @@
     <div v-if="authStore.isEmployee" class="mt-4">
       <div class="row row-cols-1 row-cols-md-2 g-4 mt-3 justify-content-center">
         <Card
-          title="All Customer Accounts"
+          title="All Customer Bank Accounts"
           subtitle="View all customer bank accounts"
           route="/accounts"
         />
         <Card
-          title="Customers Without Accounts"
-          subtitle="View and manage all customers who do not yet have accounts"
+          title="Customers Without Bank Accounts"
+          subtitle="View and manage all customers who do not yet have bank accounts"
           route="/users/review"
         />
 
         <Card
-            title="All Active Users Accounts"
-            subtitle="View and manage all customers who do not yet have accounts"
+            title="Active Customer Accounts"
+            subtitle="View and manage all active custmer accounts"
             route="/users/active"
+        />
+
+        <Card
+          title="Tranfer Funds"
+          subtitle="Send money quickly and securely from one  customer account to another"
+          route="/transfer"
+        />
+
+         <Card
+          title="Transaction History"
+          subtitle="View all transactions of all customers"
+          route="/transactions/all"
         />
       </div>
     </div>
@@ -66,7 +78,7 @@ const authStore = useAuthStore();
 
 <style scoped>
 section {
-  max-width: 1000px;
+  max-width: 1500px;
   margin: auto;
   background: var(--color-background);
   color: var(--color-text);
