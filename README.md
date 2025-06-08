@@ -1,31 +1,11 @@
+# GitHub link
+
+https://github.com/AnastasiaIU/bank-api-vue
+
+# Link to the hosted front end
+
 https://anastasiaiu.github.io/bank-api-vue/
 
-# bank-api-vue
+# Bank App
 
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+The front end for the Bank App. Implemented using Vue.js framework.
