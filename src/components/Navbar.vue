@@ -77,10 +77,13 @@ function closeOffcanvas() {
               <router-link class="dropdown-item" to="/lookup">IBAN Lookup</router-link>
             </li>
             <li v-if="authStore.isEmployee">
-              <router-link class="dropdown-item" to="/accounts">All Customer Accounts</router-link>
+              <router-link class="dropdown-item" to="/accounts">All Customer Bank Accounts</router-link>
             </li>
             <li v-if="authStore.isEmployee">
-              <router-link class="dropdown-item" to="/users/review">Customers Without Accounts</router-link>
+              <router-link class="dropdown-item" to="/users/review">Customers Without Bank Accounts</router-link>
+            </li>
+            <li v-if="authStore.isEmployee">
+              <router-link class="dropdown-item" to="/users/active">Active Customer Accounts</router-link>
             </li>
           </ul>
         </div>
@@ -217,10 +220,10 @@ function closeOffcanvas() {
                     <router-link to="/transactions" @click="closeOffcanvas">Transaction History</router-link>
                   </li>
                   <li v-if="authStore.isEmployee" class="list-group-item">
-                    <router-link to="/accounts" @click="closeOffcanvas">All Customer Accounts</router-link>
+                    <router-link to="/accounts" @click="closeOffcanvas">All Customer Bank Accounts</router-link>
                   </li>
                   <li v-if="authStore.isEmployee" class="list-group-item">
-                    <router-link to="/users/review" @click="closeOffcanvas">Customers Without Accounts</router-link>
+                    <router-link to="/users/review" @click="closeOffcanvas">Customers Without Bank Accounts</router-link>
                   </li>
                 </ul>
               </div>

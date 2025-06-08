@@ -37,7 +37,7 @@ async function confirmCloseAccount()
         API_ENDPOINTS.closeAccount(selectedAccount.value.iban),
         {
           headers: {
-            Authorization: Bearer ${authStore.token}
+             Authorization: `Bearer ${authStore.token}`
           }
         }
     );
@@ -97,7 +97,7 @@ function goToTransactionList() {
     class="container my-5"
   >
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="h2 m-0">Customer Accounts</h1>
+      <h1 class="h2 m-0">All Customer Bank Accounts</h1>
       <button
           class="btn btn-danger"
           @click="confirmCloseAccount"
@@ -114,8 +114,10 @@ function goToTransactionList() {
         >
           Update Account Limits
         </button>
-        <button class="btn btn-primary" :disabled="!selectedAccount || selectedAccount.status === 'CLOSED'"
- @click="goToTransactionList"      >
+        <button class="btn btn-primary" 
+        :disabled="!selectedAccount || selectedAccount.status === 'CLOSED'"
+        @click="goToTransactionList"
+        >
           View Transactions
         </button>
       </div>
