@@ -28,6 +28,7 @@ async function fetchTransactions(requestedPage = page.value) {
     const params = new URLSearchParams()
     params.append('page', requestedPage)
     params.append('size', pageSize.value)
+    params.append('sort', 'timestamp,desc')
 
     const url = `${API_ENDPOINTS.accountTransactionsbyId(accountId)}?${params.toString()}`
     const response = await axios.get(url)
