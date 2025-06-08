@@ -69,7 +69,7 @@ const fetchAccounts = async () => {
 const sendApproval = async (status, formData) => {
   try {
     await axios.put(API_ENDPOINTS.usersApproval(userId), {
-      approvalStatus: status
+      userAccountStatus: status
     }, {
       headers: { Authorization: `Bearer ${token}` }
     })
