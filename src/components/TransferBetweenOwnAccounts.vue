@@ -4,7 +4,7 @@ import axios from '@/utils/axios';
 import { useAuthStore } from '@/stores/auth';
 import { API_ENDPOINTS } from '@/utils/config';
 import { useForm } from 'vee-validate';
-import transferCustomerSchema from '@/schemas/transferCustomerSchema';
+import transferSchema from '@/schemas/transferSchema';
 import AccountDropdown from './shared/forms/AccountDropdown.vue';
 import BaseInput from '@/components/shared/forms/BaseInput.vue';
 import { parseEuro } from '@/utils/formatters';
@@ -18,14 +18,13 @@ const accounts = ref([]);
 const formKey = ref(0);
 
 const { handleSubmit, meta, resetForm, setFieldValue } = useForm({
-    validationSchema: transferCustomerSchema,
+    validationSchema: transferSchema,
     initialValues: {
-        fromAccountIban: '',
-        toAccountIban: '',
+        fromAccount: '',
+        toAccount: '',
         amount: '',
         description: ''
-    },
-    validateOnMount: true
+    }
 })
 
 async function fetchAccounts() {
@@ -40,8 +39,8 @@ async function fetchAccounts() {
 const onSubmit = handleSubmit(async (values) => {
     try {
         const transaction = {
-            sourceAccount: values.fromAccountIban,
-            targetAccount: values.toAccountIban,
+            sourceAccount: values.fromAccount,
+            targetAccount: values.toAccount,
             initiatedBy: authStore.user.id,
             amount: parseEuro(values.amount),
             description: values.description || null,
@@ -67,9 +66,9 @@ onMounted(fetchAccounts);
     <h1 class="h2 text-center">Transfer Funds</h1>
     <form :key="formKey" @submit.prevent="onSubmit" class="d-flex flex-column gap-2">
         <AccountDropdown :accounts="accounts" label="From Account"
-            @update:selectedAccount="account => setFieldValue('fromAccountIban', account ? account.iban : '')" />
+            @update:selectedAccount="account => setFieldValue('fromAccount', account ? account.iban : '')" />
         <AccountDropdown :accounts="accounts" label="To Account"
-            @update:selectedAccount="account => setFieldValue('toAccountIban', account ? account.iban : '')" />
+            @update:selectedAccount="account => setFieldValue('toAccount', account ? account.iban : '')" />
         <BaseInput name="amount" label="Amount to Transfer" type="currency" />
         <BaseInput name="description" label="Description" />
         <button class="btn btn-primary" type="submit" :disabled="!meta.valid">Transfer</button>

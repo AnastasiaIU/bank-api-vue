@@ -8,29 +8,35 @@ import Toast from './shared/Toast.vue';
 const toastRef = ref(null);
 const transactions = ref([]);
 const atmTransactions = ref([]);
-
-async function fetchTransactions() {
-    try {
-        const response = await axios.get(API_ENDPOINTS.allTransactions);
-        transactions.value = response.data;
-    } catch (error) {
-        toastRef.value.setToast("Failed to load transactions. Please try again.", "error");
-    }
-}
-
-async function fetchAtmTransactions() {
-    try {
-        const response = await axios.get(API_ENDPOINTS.allAtmTransactions);
-        atmTransactions.value = response.data;
-    } catch (error) {
-        toastRef.value.setToast("Failed to load ATM transactions. Please try again.", "error");
-        console.error(error);
-    }
-}
+const page = ref(0);
+const size = ref(10);
+const totalPages = ref(0);
 
 async function fetchAllTransactions() {
-    await fetchTransactions();
-    await fetchAtmTransactions();
+    try {
+        const response = await axios.get(API_ENDPOINTS.combinedTransactions(page.value, size.value));
+        const data = response.data;
+
+        transactions.value = data.content;
+        totalPages.value = data.totalPages;
+        console.log(response.data);
+    } catch (error) {
+        toastRef.value.setToast('Failed to fetch transactions', 'error');
+    }
+}
+
+function nextPage() {
+    if (page.value < totalPages.value - 1) {
+        page.value++;
+        fetchAllTransactions();
+    }
+}
+
+function prevPage() {
+    if (page.value > 0) {
+        page.value--;
+        fetchAllTransactions();
+    }
 }
 
 onMounted(async () => {
@@ -47,19 +53,28 @@ const allTransactions = computed(() => {
     <h1 class="h2 text-center m-4">Transactions</h1>
     <div class="wrapper">
         <div v-for="t in allTransactions">
-            <div v-if="t.type == null">
+            <div v-if="t.type == 'TRANSFER'">
                 <TransactionEntity :from-account="t.sourceIban" :to-account="t.targetIban" :amount="t.amount"
                     :initiated-by="t.initiatedBy" :timestamp="t.timestamp" />
             </div>
             <div v-else-if="t.type === 'DEPOSIT'">
-                <TransactionEntity :to-account="t.iban" :amount="t.amount" :initiated-by="t.initiatedBy"
+                <TransactionEntity :to-account="t.sourceIban" :amount="t.amount" :initiated-by="t.initiatedBy"
                     :timestamp="t.timestamp" />
             </div>
             <div v-else>
-                <TransactionEntity :from-account="t.iban" :amount="t.amount" :initiated-by="t.initiatedBy"
+                <TransactionEntity :from-account="t.sourceIban" :amount="t.amount" :initiated-by="t.initiatedBy"
                     :timestamp="t.timestamp" />
             </div>
         </div>
+        <nav aria-label="Page navigation" class="d-flex justify-content-center align-items-center m-4 gap-3">
+            <button class="btn btn-outline-primary" @click="prevPage" :disabled="page === 0"><i
+                    class="bi bi-chevron-left"></i> Previous</button>
+            <span class="text-muted fw-semibold">
+                Page {{ page + 1 }} of {{ totalPages }}
+            </span>
+            <button class="btn btn-outline-primary" @click="nextPage" :disabled="page >= totalPages - 1">Next <i
+                    class="bi bi-chevron-right"></i></button>
+        </nav>
     </div>
     <Toast ref="toastRef" />
 </template>

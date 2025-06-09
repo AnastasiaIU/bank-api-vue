@@ -71,11 +71,6 @@ function closeOffcanvas() {
             >
               <router-link class="dropdown-item" to="/transactions">Transaction History</router-link>
             </li>
-            <li
-              v-if="!authStore.isEmployee && authStore.isApproved"
-            >
-              <router-link class="dropdown-item" to="/lookup">IBAN Lookup</router-link>
-            </li>
             <li v-if="authStore.isEmployee">
               <router-link class="dropdown-item" to="/accounts">All Customer Bank Accounts</router-link>
             </li>

@@ -16,12 +16,11 @@ export const API_ENDPOINTS = {
   usersById: (id) => `${API_BASE_URL}/users/${id}`,
   accountsByIdReview: (id) => `${API_BASE_URL}/users/${id}/accounts/review`,
   updateLimits: (iban) => `${API_BASE_URL}/accounts/${iban}/limits`,
-  accountsByName: (firstName, lastName) => `${API_BASE_URL}/users/accounts/${firstName}/${lastName}`,
+  accountsByName: (firstName, lastName, id) => `${API_BASE_URL}/users/accounts/${firstName}/${lastName}/${id}`,
   userAccounts: (id) => `${API_BASE_URL}/users/${id}/accounts`,
   accountTransactionsbyId: (id) => `${API_BASE_URL}/accounts/${id}/transactions`,
   closeAccount: (iban) => `${API_BASE_URL}/accounts/${iban}/close`,
   activeAccounts: `${API_BASE_URL}/users/accounts/active`,
   closeUserAccountWithBankAcc: (id) => `${API_BASE_URL}/users/${id}/close`,
-  allAtmTransactions: `${API_BASE_URL}/atm/transactions`,
-  allTransactions: `${API_BASE_URL}/transactions`,
+  combinedTransactions: (page, size) => `${API_BASE_URL}/combined-transactions?page=${page}&size=${size}`
 };

@@ -5,7 +5,7 @@ import axios from '@/utils/axios';
 import BaseInput from '@/components/shared/forms/BaseInput.vue';
 import { useForm } from 'vee-validate';
 import { parseEuro } from '@/utils/formatters';
-import transferEmployeeSchema from '@/schemas/transferEmployeeSchema';
+import transferSchema from '@/schemas/transferSchema';
 import { useAuthStore } from '@/stores/auth';
 import { ref } from 'vue';
 
@@ -13,14 +13,13 @@ const toastRef = ref(null);
 const authStore = useAuthStore();
 
 const { handleSubmit, meta, resetForm } = useForm({
-    validationSchema: transferEmployeeSchema,
+    validationSchema: transferSchema,
         initialValues: {
         fromAccount: '',
         toAccount: '',
         amount: '',
         description: ''
-    },
-    validateOnMount: true
+    }
 });
 
 const onSubmit = handleSubmit(async (values) => {
