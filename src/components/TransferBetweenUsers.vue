@@ -6,7 +6,7 @@ import { API_ENDPOINTS } from '@/utils/config';
 import { useAuthStore } from '@/stores/auth';
 import AccountDropdown from './shared/forms/AccountDropdown.vue';
 import { useForm } from 'vee-validate'
-import transferCustomerSchema from '@/schemas/transferCustomerSchema';
+import transferSchema from '@/schemas/transferSchema';
 import { parseEuro } from '@/utils/formatters';
 import BaseInput from './shared/forms/BaseInput.vue';
 
@@ -17,14 +17,13 @@ const props = defineProps({
 const authStore = useAuthStore();
 
 const { handleSubmit, meta, resetForm, setFieldValue } = useForm({
-    validationSchema: transferCustomerSchema,
+    validationSchema: transferSchema,
     initialValues: {
-        fromAccountIban: '',
-        toAccountIban: '',
+        fromAccount: '',
+        toAccount: '',
         amount: '',
         description: ''
-    },
-    validateOnMount: true
+    }
 })
 
 const firstName = ref('');
@@ -37,7 +36,7 @@ const formKey = ref(0);
 async function findIbans() {
     searched.value = false;
 
-    const accountsResponse = await axios.get(API_ENDPOINTS.accountsByName(firstName.value, lastName.value), {
+    const accountsResponse = await axios.get(API_ENDPOINTS.accountsByName(firstName.value, lastName.value, authStore.user.id), {
         headers: {
             Authorization: `Bearer ${authStore.token}`
         }
@@ -71,14 +70,14 @@ function disableFindButton() {
 }
 
 const onSubmit = handleSubmit(async (formValues) => {
-    if (!formValues.fromAccountIban) {
+    if (!formValues.fromAccount) {
         props.toast.setToast('Please select an IBAN to transfer from.', 'error');
         return;
     }
     try {
         const transaction = {
-            sourceAccount: formValues.fromAccountIban,
-            targetAccount: formValues.toAccountIban,
+            sourceAccount: formValues.fromAccount,
+            targetAccount: formValues.toAccount,
             initiatedBy: authStore.user.id,
             amount: parseEuro(formValues.amount),
             description: formValues.description || null,
@@ -114,9 +113,9 @@ const onSubmit = handleSubmit(async (formValues) => {
         <div v-if="accounts.length" class="list-group">
             <form :key="formKey" @submit.prevent="onSubmit" class="d-flex flex-column gap-2">
                 <AccountDropdown :accounts="yourAccounts" label="Select your account:"
-                    @update:selectedAccount="yourAccounts => setFieldValue('fromAccountIban', yourAccounts ? yourAccounts.iban : '')" />
+                    @update:selectedAccount="yourAccounts => setFieldValue('fromAccount', yourAccounts ? yourAccounts.iban : '')" />
                 <AccountDropdown :accounts="accounts" label="IBANs found:"
-                    @update:selectedAccount="account => setFieldValue('toAccountIban', account ? account.iban : '')"
+                    @update:selectedAccount="account => setFieldValue('toAccount', account ? account.iban : '')"
                     :balanceVisible="false" />
                 <BaseInput name="amount" label="Amount to Transfer" type="currency" />
                 <BaseInput name="description" label="Description" />

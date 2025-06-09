@@ -76,7 +76,7 @@ export const ibanRule = yup
   .string()
   .required('IBAN is required')
   .matches(/^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$/, 'Invalid IBAN format')
-  .test('iban-length', 'IBAN must be 34 characters', (value) => {
+  .test('iban-length', 'IBAN must be between 15 and 34 characters', (value) => {
     if (!value) return false
     return value.length >= 15 && value.length <= 34
   })
