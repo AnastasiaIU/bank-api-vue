@@ -93,7 +93,7 @@ onMounted(async () => {
 
 <template>
   <div class="container py-5">
-    <div class="card shadow-sm p-4 border-top border-primary" style="border-top-width: 5px;">
+    <div class="card shadow-sm p-4 border-top" style="border-top-width: 5px;">
       <h2 class="mb-4">User Account Review</h2>
 
       <div class="row">
