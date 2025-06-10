@@ -56,8 +56,13 @@ export const useAtmTransactionStore = defineStore('atm-transaction', () => {
             const finalTransaction = await pollStatus(createdTransaction.data.id)
 
             if (finalTransaction.status === 'SUCCEEDED') {
+
+                // Fetch updated user accounts after successful transaction
                 await accountStore.fetchUserAccounts(authStore.user.id)
-                return { message: "Transaction succeeded. Money dispensed.", type: "success" }
+
+                const displayMessage = transactionData.type === 'WITHDRAW' ? 'Transaction succeeded. Money dispensed.' : 'Transaction succeeded. Money deposited.'
+
+                return { message: displayMessage, type: "success" }
             } else {
                 return { message: finalTransaction.failureReason || "Transaction failed.", type: "error" }
             }
