@@ -25,7 +25,7 @@ onMounted(() => {
 
 <template>
   <div class="container py-5">
-    <div class="card shadow-sm p-4 border-top border-primary" style="border-top-width: 5px;">
+    <div class="card shadow-sm p-4 border-top" style="border-top-width: 5px;">
       <!-- Header -->
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h1 class="h2 text-center"> Pending User Approvals</h1>
