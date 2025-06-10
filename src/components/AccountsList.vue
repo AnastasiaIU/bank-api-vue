@@ -98,15 +98,17 @@ function goToTransactionList() {
   >
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="h2 m-0">All Customer Bank Accounts</h1>
-      <button
-          class="btn btn-danger"
-          @click="confirmCloseAccount"
-          :disabled="!selectedAccount || selectedAccount.status === 'CLOSED'"
-      >
-        Close Account
-      </button>
+
 
       <div class="d-flex gap-2">
+
+        <button
+            class="btn btn-danger"
+            @click="confirmCloseAccount"
+            :disabled="!selectedAccount || selectedAccount.status === 'CLOSED'"
+        >
+          Close Account
+        </button>
         <button
           class="btn btn-primary"
           @click="openModal"
@@ -120,6 +122,7 @@ function goToTransactionList() {
         >
           View Transactions
         </button>
+
       </div>
     </div>
     
