@@ -19,7 +19,6 @@ async function fetchAllTransactions() {
 
         transactions.value = data.content;
         totalPages.value = data.totalPages;
-        console.log(data);
     } catch (error) {
         toastRef.value.setToast('Failed to fetch transactions', 'error');
     }
