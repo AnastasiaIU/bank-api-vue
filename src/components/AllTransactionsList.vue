@@ -19,7 +19,7 @@ async function fetchAllTransactions() {
 
         transactions.value = data.content;
         totalPages.value = data.totalPages;
-        console.log(response.data);
+        console.log(data);
     } catch (error) {
         toastRef.value.setToast('Failed to fetch transactions', 'error');
     }
@@ -55,15 +55,15 @@ const allTransactions = computed(() => {
         <div v-for="t in allTransactions">
             <div v-if="t.type == 'TRANSFER'">
                 <TransactionEntity :from-account="t.sourceIban" :to-account="t.targetIban" :amount="t.amount"
-                    :initiated-by="t.initiatedBy" :timestamp="t.timestamp" />
+                    :initiated-by="t.initiatedBy" :timestamp="t.timestamp" :status="t.status" />
             </div>
             <div v-else-if="t.type === 'DEPOSIT'">
                 <TransactionEntity :to-account="t.sourceIban" :amount="t.amount" :initiated-by="t.initiatedBy"
-                    :timestamp="t.timestamp" />
+                    :timestamp="t.timestamp" :status="t.status" />
             </div>
             <div v-else>
                 <TransactionEntity :from-account="t.sourceIban" :amount="t.amount" :initiated-by="t.initiatedBy"
-                    :timestamp="t.timestamp" />
+                    :timestamp="t.timestamp" :status="t.status" />
             </div>
         </div>
         <nav aria-label="Page navigation" class="d-flex justify-content-center align-items-center m-4 gap-3">

@@ -13,6 +13,10 @@ const props = defineProps({
     timestamp: {
         type: String,
         required: true
+    },
+    status: {
+        type: String,
+        required: true
     }
 })
 </script>
@@ -43,9 +47,14 @@ const props = defineProps({
                     }}
                 </div>
             </div>
-            <div class="d-flex">
-                <strong class="amount-text">Amount:</strong>
-                <span class="amount">€{{ props.amount.toFixed(2) }}</span>
+            <div class="d-flex flex-column">
+                <div>
+                    <strong class="amount-text">Amount:</strong>
+                    <span class="amount">€{{ props.amount.toFixed(2) }}</span>
+                </div>
+                <div>
+                    <strong>Status: <span>{{ props.status }}</span></strong>
+                </div>
             </div>
         </div>
     </section>
